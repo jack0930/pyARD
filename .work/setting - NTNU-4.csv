@@ -1,0 +1,21 @@
+parameter,value
+numParameters,19
+Production Ratio 39Ar/37Ar(ca),0.005096175
+Production Ratio 39Ar/37Ar(ca) std,0.000902155
+Production Ratio 36Ar/37Ar(ca),0.190322698
+Production Ratio 36Ar/37Ar(ca) std,0.030354413
+Production Ratio 40Ar/39Ar(k),0.020871643
+Production Ratio 40Ar/39Ar(k) std,0.091400668
+Production Ratio 38Ar/39Ar(k),0.013776229
+Production Ratio 38Ar/39Ar(k) std,0.000504505
+Production Ratio 36Ar/38Ar(cl),0
+Production Ratio 36Ar/38Ar(cl) std,0
+Atmospheric Ratio 40/36(a),298.56
+Atmospheric Ratio 40/36(a) std,0.31
+Atmospheric Ratio 38/36(a),0.1885
+Atmospheric Ratio 38/36(a) std,0.000347
+?,5.531E-10
+J value,0.014262869
+J std,0.000068528
+J int,0.000068528
+numCycle,10
