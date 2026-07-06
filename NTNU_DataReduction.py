@@ -494,7 +494,7 @@ class App():
 
     # check if current app is up to date
     def checkVersion(self):
-        app_info_url = 'https://raw.githubusercontent.com/AndrewLiu0725/pyADR/main/.work/.app_info.txt'
+        app_info_url = 'https://raw.githubusercontent.com/jack0930/pyADR/main/.work/.app_info.txt'
         try:
             page = requests.get(app_info_url)
             if page.ok:
@@ -504,7 +504,7 @@ class App():
                 if current_version == latest_version:
                     self.Popup(1, "No updates available at this time", version_msg)
                 else:
-                    git_repo_url = "https://github.com/AndrewLiu0725/pyADR.git"
+                    git_repo_url = "https://github.com/jack0930/pyARD.git"
                     self.Popup(1, "There are updates available at this time", version_msg+"Please go to {} to update to the latest version!\n".format(git_repo_url))
             else:
                 self.Popup(2, "HTTP request failed!", "HTTP status {}".format(page.status_code))
@@ -768,7 +768,7 @@ class App():
 
         if len(mass) > 0 and len(bg) > 0:
             try:
-                self.ratio_result = Utilities.calculateMassRatio(mass, bg, self.parameters[19])
+                self.ratio_result = Utilities.calculateMassRatio(mass, bg, self.parameters[self.parameters_name.index('λ for age calculation')])
 
                 for i in range(5):
                     for j in range(5):
@@ -1968,10 +1968,31 @@ class App():
                         ar38cl = float((data[6].split(','))[5]) - float((data[7].split(','))[5]) - float((data[8].split(','))[5])
                         KCa = (float((data[10].split(','))[5])*0.52)/float((data[5].split(','))[5])
                         KCa_std = (KCa)*(np.sqrt((float((data[10].split(','))[6])/float((data[10].split(','))[5]))**2 + (float((data[5].split(','))[6])/float((data[5].split(','))[5]))**2 + (0.02/0.52)**2))
-                        ar36cl = float(self.parameters[6])*ar38cl
+                        ar36cl = float(self.parameters[self.numParamters[self.parameters_name.index("Production Ratio 38Ar/39Ar(k)")]])*ar38cl
                         ra40 = float((data[13].split(','))[5]) +float((data[14].split(','))[5])
                         ra40_std = float((data[13].split(','))[6]) +float((data[14].split(','))[6])
-                        f.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format((data[1].split(','))[0],(data[1].split(','))[2],(data[1].split(','))[3],(data[1].split(','))[1],(data[23].split(','))[5],(data[23].split(','))[6],(data[25].split(','))[5],(data[2].split(','))[5],(data[2].split(','))[6],(data[5].split(','))[5],(data[5].split(','))[6],ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(float((data[24].split(','))[5])/1000000),(float((data[24].split(','))[6])/1000000),ar40r,ar39k,ar40r_s,ar39k_s,KCa,KCa_std,(data[2].split(','))[5],(data[2].split(','))[6],ar36c,ar36c,(data[3].split(','))[5],(data[3].split(','))[6],ar36cl,ar36cl,(data[5].split(','))[5],(data[5].split(','))[6],(data[7].split(','))[5],(data[7].split(','))[6],ar38c,ar38c,(data[8].split(','))[5],(data[8].split(','))[6],ar38ca,ar38ca,ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[11].split(','))[5],(data[11].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(data[14].split(','))[5],(data[14].split(','))[6],ar40c,ar40c,(data[15].split(','))[5],(data[15].split(','))[6],(data[19].split(','))[5],(data[19].split(','))[6],ra40,ra40_std,(data[20].split(','))[5],(data[20].split(','))[6],(data[22].split(','))[5],(data[22].split(','))[6],(data[21].split(','))[5],(data[21].split(','))[6],self.parameters[0],self.parameters[1],self.parameters[2],self.parameters[3],self.parameters[4],self.parameters[5],self.parameters[6],self.parameters[7],self.parameters[8],self.parameters[9],self.parameters[10],self.parameters[11],self.parameters[12],self.parameters[13],self.parameters[14],self.parameters[18]))
+                        f.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+                            (data[1].split(','))[0],(data[1].split(','))[2],(data[1].split(','))[3],(data[1].split(','))[1],(data[23].split(','))[5],(data[23].split(','))[6],(data[25].split(','))[5],(data[2].split(','))[5],(data[2].split(','))[6],(data[5].split(','))[5],(data[5].split(','))[6],ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(float((data[24].split(','))[5])/1000000),(float((data[24].split(','))[6])/1000000),ar40r,ar39k,ar40r_s,ar39k_s,KCa,KCa_std,(data[2].split(','))[5],(data[2].split(','))[6],ar36c,ar36c,(data[3].split(','))[5],(data[3].split(','))[6],ar36cl,ar36cl,(data[5].split(','))[5],(data[5].split(','))[6],(data[7].split(','))[5],(data[7].split(','))[6],ar38c,ar38c,(data[8].split(','))[5],(data[8].split(','))[6],ar38ca,ar38ca,ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[11].split(','))[5],(data[11].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(data[14].split(','))[5],(data[14].split(','))[6],ar40c,ar40c,(data[15].split(','))[5],(data[15].split(','))[6],(data[19].split(','))[5],(data[19].split(','))[6],ra40,ra40_std,(data[20].split(','))[5],(data[20].split(','))[6],(data[22].split(','))[5],(data[22].split(','))[6],(data[21].split(','))[5],(data[21].split(','))[6],
+                            self.parameters[self.parameters_name.index("Production Ratio 39Ar/37Ar(ca)")],
+                            self.parameters[self.parameters_name.index("Production Ratio 39Ar/37Ar(ca)_std")], 
+                            self.parameters[self.parameters_name.index("Production Ratio 36Ar/37Ar(ca)")],
+                            self.parameters[self.parameters_name.index("Production Ratio 36Ar/37Ar(ca)_std")],
+                            self.parameters[self.parameters_name.index("Production Ratio 40Ar/39Ar(k)")],
+                            self.parameters[self.parameters_name.index("Production Ratio 40Ar/39Ar(k)_std")],
+                            self.parameters[self.parameters_name.index("Production Ratio 38Ar/39Ar(k)")],
+                            self.parameters[self.parameters_name.index("Production Ratio 38Ar/39Ar(k)_std")],
+                            self.parameters[self.parameters_name.index("Production Ratio 36Ar/38Ar(cl)")],
+                            self.parameters[self.parameters_name.index("Production Ratio 36Ar/38Ar(cl)_std")],
+                            self.parameters[self.parameters_name.index("Atmospheric Ratio 40/36(a)")],
+                            self.parameters[self.parameters_name.index("Atmospheric Ratio 40/36(a)_std")],
+                            self.parameters[self.parameters_name.index("Atmospheric Ratio 38/36(a)")],
+                            self.parameters[self.parameters_name.index("Atmospheric Ratio 38/36(a)_std")],
+                            self.parameters[self.parameters_name.index("λ for age calculation")],
+                
+                            #self.parameters[self.parameters_name.index("λ_std for age calculation")],
+                            
+                            self.parameters[self.parameters_name.index("J_int")])
+                            )
                     f.write(",,,,,,SUM,{},,{},,{},,{},,{}".format(ar36a_sum,ar37ca_sum,ar38cl_sum,ar39k_s_sum,ar40r_sum))
                     f.close()
             except:

@@ -1,5 +1,5 @@
 parameter,value
-numParameters,20
+numParameters,21
 Production Ratio 39Ar/37Ar(ca),0.000377631
 Production Ratio 39Ar/37Ar(ca) std,0.0000609
 Production Ratio 36Ar/37Ar(ca),0.0000346
@@ -14,7 +14,8 @@ Atmospheric Ratio 40/36(a),298.56
 Atmospheric Ratio 40/36(a) std,0.31
 Atmospheric Ratio 38/36(a),0.1885
 Atmospheric Ratio 38/36(a) std,0.000347
-?,5.53E-10
+L,5.53E-10
+L_std,5.53E-10
 J value,0.005564
 J std,0.0000241
 J int,0.0000241

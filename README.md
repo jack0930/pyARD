@@ -34,7 +34,7 @@ The following functions are provided:
     * either download and unzip this repo.
     * or clone it to your working folder by the following commad.
     ```
-    git clone https://github.com/AndrewLiu0725/pyADR.git
+    git clone https://github.com/jack0930/pyARD.git
     ```
 2. Open the terminal (on Windows, recommend using Anaconda's prompt shell unless you already setup the environment variables in your prefered terminal) and type the following commands
     ```

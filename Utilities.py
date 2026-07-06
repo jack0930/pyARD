@@ -1380,8 +1380,8 @@ def calculateSlatK(salt):
     return ratio,info
 
 def getJVolumeStatistics(file, t,t_std,constants):
-    l = constants[15]
-    l_std = 0.0135*0.0000000001
+    l = constants[14]
+    l_std = constants[15]
     # collect data
     data = np.zeros((5, 2))
 
