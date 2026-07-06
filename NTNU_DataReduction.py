@@ -1967,7 +1967,7 @@ class App():
                         ar40r_s = round(float((data[27].split(','))[5])/ar40r_s_sum*100,4)
                         ar38cl = float((data[6].split(','))[5]) - float((data[7].split(','))[5]) - float((data[8].split(','))[5])
                         KCa = (float((data[10].split(','))[5])*0.52)/float((data[5].split(','))[5])
-                        KCa_std = (KCa)*(float((data[10].split(','))[6])/float((data[10].split(','))[5]) + float((data[5].split(','))[6])/float((data[5].split(','))[5]) + 0.02/0.52)
+                        KCa_std = (KCa)*(np.sqrt((float((data[10].split(','))[6])/float((data[10].split(','))[5]))**2 + (float((data[5].split(','))[6])/float((data[5].split(','))[5]))**2 + (0.02/0.52)**2))
                         ar36cl = float(self.parameters[6])*ar38cl
                         ra40 = float((data[13].split(','))[5]) +float((data[14].split(','))[5])
                         ra40_std = float((data[13].split(','))[6]) +float((data[14].split(','))[6])

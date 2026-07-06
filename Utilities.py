@@ -341,14 +341,17 @@ def getDFStatistics_ls(file, mask,constants, Ncolor, Nmaker):
     
     for i in range(len(y)):
         T_sum = T_sum + T_all[i]
+        
     T_sum = T_sum/len(y)
 
     for i in range(len(y)):
         mswd = (((T_sum-T_all[i])**2)/(T_std_all[i]**2))+mswd
+        
     mswd = 1/(len(y)-1)*mswd
 
     for i in range(len(y)):
         wma = wma+((1/(T_std_all[i]**2)*T_all[i])/(1/(T_std_all[i]**2)))
+        
     plt.clf()
     plt.close("all")
 
@@ -1304,9 +1307,10 @@ def calculateMassRatio(mass_filename, background_filename, OGD):
         preline[i, 1] = float(data[i+1].split(',')[7]) # T0_SIGMA
 
     measurement = raw[:, 0] - preline[:, 0] # 36 37 38 39 40 (Measurement)
-    measurement_std = np.sqrt(raw[:, 1]**2 + preline[:, 1]**2)
     measurement[1] = measurement[1] * np.exp(0.0198*T)
     measurement[3] = measurement[3] * np.exp(0.0000071*T)
+    
+    measurement_std = np.sqrt(raw[:, 1]**2 + preline[:, 1]**2)
    
     ratio = np.zeros(5)
     ratio_std = np.zeros(5)
@@ -1376,7 +1380,7 @@ def calculateSlatK(salt):
     return ratio,info
 
 def getJVolumeStatistics(file, t,t_std,constants):
-    l = 5.531*0.0000000001
+    l = constants[15]
     l_std = 0.0135*0.0000000001
     # collect data
     data = np.zeros((5, 2))
@@ -1489,30 +1493,30 @@ def calcAge(measurement_filename, J, J_std, J_int, constants):
     Ar_36_m = data[0, 0]
     Ar_36_m_std = data[0, 1]
     Ar_36_Ca = Ar_37_Ca * constants[2]
-    Ar_36_Ca_std = (Ar_37_Ca_std/Ar_37_Ca + constants[3]/constants[2]) * Ar_36_Ca
+    Ar_36_Ca_std = (np.sqrt((Ar_37_Ca_std/Ar_37_Ca)**2 + (constants[3]/constants[2])**2)) * Ar_36_Ca
     Ar_36_Air = Ar_36_m - Ar_36_Ca
     Ar_36_Air_std = minusSigma(Ar_36_m_std, Ar_36_Ca_std)
 
     Ar_39_m = data[3, 0]
     Ar_39_m_std = data[3, 1]
     Ar_39_Ca = Ar_37_Ca * constants[0]
-    Ar_39_Ca_std = (Ar_37_Ca_std/Ar_37_Ca + constants[1]/constants[0]) * Ar_39_Ca
+    Ar_39_Ca_std = (np.sqrt((Ar_37_Ca_std/Ar_37_Ca)**2 + (constants[1]/constants[0])**2)) * Ar_39_Ca
     Ar_39_K = Ar_39_m - Ar_39_Ca
     Ar_39_K_std = minusSigma(Ar_39_m_std, Ar_39_Ca_std)
 
     Ar_38_m = data[2, 0]
     Ar_38_m_std = data[2, 1]
     Ar_38_K = Ar_39_K * constants[6]
-    Ar_38_K_std = (Ar_39_K_std/Ar_39_K + constants[7]/constants[6]) * Ar_38_K
+    Ar_38_K_std = (np.sqrt((Ar_39_K_std/Ar_39_K)**2 + (constants[7]/constants[6])**2)) * Ar_38_K
     Ar_38_Air = Ar_38_m - Ar_38_K
     Ar_38_Air_std = minusSigma(Ar_38_m_std, Ar_38_K_std)
 
     Ar_40_m = data[4, 0]
     Ar_40_m_std = data[4, 1]
     Ar_40_air = Ar_36_Air * constants[10]
-    Ar_40_air_std = (Ar_36_Air_std/Ar_36_Air + constants[11]/constants[10]) * Ar_40_air
+    Ar_40_air_std = (np.sqrt((Ar_36_Air_std/Ar_36_Air)**2 + (constants[11]/constants[10])**2)) * Ar_40_air
     Ar_40_K = Ar_39_K * constants[4]
-    Ar_40_K_std = (Ar_39_K_std/Ar_39_K + constants[5]/constants[4]) * Ar_40_K
+    Ar_40_K_std = (np.sqrt((Ar_39_K_std/Ar_39_K)**2 + (constants[5]/constants[4])**2)) * Ar_40_K
     Ar_40_radioactive = Ar_40_m - Ar_40_air - Ar_40_K
     Ar_40_radioactive_std = np.sqrt(Ar_40_m_std**2 + Ar_40_air_std**2 + Ar_40_K_std**2)
     Ar_40_radioactive_ratio = Ar_40_radioactive / data[4, 0]
@@ -1520,11 +1524,11 @@ def calcAge(measurement_filename, J, J_std, J_int, constants):
 
     # ratio calculation
     Ar_39_K_40_r_ratio =  Ar_39_K / Ar_40_radioactive
-    Ar_39_K_40_r_ratio_std = Ar_39_K_40_r_ratio*(Ar_39_K_std/Ar_39_K + Ar_40_radioactive_std/Ar_40_radioactive)
+    Ar_39_K_40_r_ratio_std = Ar_39_K_40_r_ratio*(np.sqrt((Ar_39_K_std/Ar_39_K)**2 + (Ar_40_radioactive_std/Ar_40_radioactive)**2))
     Ar_36_Air_40_r_ratio = Ar_36_Air / Ar_40_radioactive
-    Ar_36_Air_40_r_ratio_std = Ar_36_Air_40_r_ratio*(Ar_36_Air_std/Ar_36_Air + Ar_40_radioactive_std/Ar_40_radioactive)
+    Ar_36_Air_40_r_ratio_std = Ar_36_Air_40_r_ratio*(np.sqrt((Ar_36_Air_std/Ar_36_Air)**2 + (Ar_40_radioactive_std/Ar_40_radioactive)**2))
     Ar_39_K_36_Air = Ar_39_K / Ar_36_Air
-    Ar_39_K_36_Air_std = Ar_39_K_36_Air*(Ar_39_K_std/Ar_39_K + Ar_36_Air_std/Ar_36_Air)
+    Ar_39_K_36_Air_std = Ar_39_K_36_Air*(np.sqrt((Ar_39_K_std/Ar_39_K)**2 + (Ar_36_Air_std/Ar_36_Air)**2))
 
     # Age calculation
     C1, C2, C3, C4 = constants[10], constants[2], constants[4], constants[0] #40/36A 36/37Ca 40/39K 39/37Ca
