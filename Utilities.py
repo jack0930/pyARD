@@ -1417,20 +1417,45 @@ def getJVolumeStatistics(file, t,t_std,constants):
     
     Ar_39_K_40_r_ratio =  Ar_40_radioactive/Ar_39_K
     
-    C1, C2, C4 = constants[10], constants[2], constants[0]
+    C1, C2, C3, C4 = constants[10], constants[2], constants[4], constants[0] #40/36A 36/37Ca 40/39K 39/37Ca
+    C1_std,C2_std,C3_std,C4_std = constants[11], constants[3], constants[5], constants[1]
+    
     G = Ar_40_m / Ar_39_m
-    G_std = G*(Ar_40_m_std/Ar_40_m + Ar_39_m_std/Ar_39_m)
+    G_std = G*(np.sqrt((Ar_40_m_std/Ar_40_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
+    
     B = Ar_36_m / Ar_39_m
-    B_std = B*(Ar_36_m_std/Ar_36_m + Ar_39_m_std/Ar_39_m)
+    B_std = B*(np.sqrt((Ar_36_m_std/Ar_36_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
+    
     D = Ar_37_m / Ar_39_m
-    D_std = D*(Ar_37_m_std/Ar_37_m + Ar_39_m_std/Ar_39_m)
-    F_std = np.sqrt(G_std**2 + (C1*B_std)**2 + ((C4*G - C1*C4*B + C1*C2)*D_std)**2)
+    D_std = D*(np.sqrt(Ar_37_m_std/Ar_37_m)**2 + (Ar_39_m_std/Ar_39_m)**2)
+    
+    N = G-C1*B-C3+(C1*C2+C3*C4)*D
+    Q = 1.0-C4*D
+    
+    dF_dG = 1.0/Q
+    dF_dB = -C1/Q
+    dF_dD = ((C1*C2+C3*C4)*Q+C4*N)/Q**2
+
+    dF_dC1 = (-B+C2*D)/Q
+    dF_dC2 = C1*D/Q
+    dF_dC3 = -1.0
+    dF_dC4 = (C3*D*Q+N*D)/Q**2
+
+    F_std = np.sqrt(
+        (dF_dG*G_std)**2
+        +(dF_dB*B_std)**2
+        +(dF_dD*D_std)**2
+        +(dF_dC1*C1_std)**2
+        +(dF_dC2*C2_std)**2
+        +(dF_dC3*C3_std)**2
+        +(dF_dC4*C4_std)**2
+    )
     
     # J calcuation
     J = (np.exp(l*t)-1)/(Ar_40_radioactive/Ar_39_K) 
     v1 = l_std**2*(t*np.exp(l*t)/Ar_39_K_40_r_ratio)**2
-    v2 = t_std ** 2 * (l * np.exp(l * t) / Ar_39_K_40_r_ratio) ** 2
-    v3 = F_std ** 2 * ((np.exp(l * t)) - 1 / Ar_39_K_40_r_ratio ** 2) ** 2
+    v2 = t_std ** 2 * (l * np.exp(l*t) / Ar_39_K_40_r_ratio) ** 2
+    v3 = F_std ** 2 * ((np.exp(l*t)-1) / Ar_39_K_40_r_ratio ** 2) ** 2
     J_std = pow(v1 + v2 + v3, 0.5)
     J_int = pow(v3, 0.5)
     return [Ar_36_Air,Ar_37_Ca,Ar_39_K,Ar_40_radioactive,Ar_40_radioactive/Ar_40_m*100,Ar_39_K/Ar_39_m*100,(Ar_39_K*0.52)/Ar_37_Ca,((Ar_39_K*0.52)/Ar_37_Ca)*(Ar_39_K_std/Ar_39_K + Ar_37_Ca_std/Ar_37_Ca + 0.02/0.52),J,J_std,J_int]
@@ -1502,15 +1527,44 @@ def calcAge(measurement_filename, J, J_std, J_int, constants):
     Ar_39_K_36_Air_std = Ar_39_K_36_Air*(Ar_39_K_std/Ar_39_K + Ar_36_Air_std/Ar_36_Air)
 
     # Age calculation
-    C1, C2, C3, C4 = constants[10], constants[2], constants[4], constants[0]
+    C1, C2, C3, C4 = constants[10], constants[2], constants[4], constants[0] #40/36A 36/37Ca 40/39K 39/37Ca
+    C1_std,C2_std,C3_std,C4_std = constants[11], constants[3], constants[5], constants[1]
+    
     G = Ar_40_m / Ar_39_m
-    G_std = G*(Ar_40_m_std/Ar_40_m + Ar_39_m_std/Ar_39_m)
+    G_std = G*(np.sqrt((Ar_40_m_std/Ar_40_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
+    
     B = Ar_36_m / Ar_39_m
-    B_std = B*(Ar_36_m_std/Ar_36_m + Ar_39_m_std/Ar_39_m)
+    B_std = B*(np.sqrt((Ar_36_m_std/Ar_36_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
+    
     D = Ar_37_m / Ar_39_m
-    D_std = D*(Ar_37_m_std/Ar_37_m + Ar_39_m_std/Ar_39_m)
-    F = Ar_40_radioactive / Ar_39_K
-    F_std = np.sqrt(G_std**2 + (C1*B_std)**2 + ((C4*G - C1*C4*B + C1*C2)*D_std)**2)
+    D_std = D*(np.sqrt(Ar_37_m_std/Ar_37_m)**2 + (Ar_39_m_std/Ar_39_m)**2)
+    
+    #F = Ar_40_radioactive / Ar_39_K
+    #F_std = np.sqrt(G_std**2 + (C1*B_std)**2 + ((C4*G - C1*C4*B + C1*C2)*D_std)**2)
+    
+    N = G-C1*B-C3+(C1*C2+C3*C4)*D
+    Q = 1.0-C4*D
+    F = N/Q
+    
+    dF_dG = 1.0/Q
+    dF_dB = -C1/Q
+    dF_dD = ((C1*C2+C3*C4)*Q+C4*N)/Q**2
+
+    dF_dC1 = (-B+C2*D)/Q
+    dF_dC2 = C1*D/Q
+    dF_dC3 = -1.0
+    dF_dC4 = (C3*D*Q+N*D)/Q**2
+
+    F_std = np.sqrt(
+        (dF_dG*G_std)**2
+        +(dF_dB*B_std)**2
+        +(dF_dD*D_std)**2
+        +(dF_dC1*C1_std)**2
+        +(dF_dC2*C2_std)**2
+        +(dF_dC3*C3_std)**2
+        +(dF_dC4*C4_std)**2
+    )
+    
 
     T = np.log(1 + J*F) / constants[14]
     T_std = np.sqrt((J**2 * F_std**2 + F**2 * J_std**2)/ ((constants[14]*(1+F*J))**2))
