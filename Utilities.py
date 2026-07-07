@@ -1409,7 +1409,7 @@ def getJVolumeStatistics(file, t,t_std,constants):
     Ar_39_m = data[3, 0]
     Ar_39_m_std = data[3, 1]
     Ar_39_Ca = Ar_37_Ca * constants[0]
-    Ar_39_Ca_std = (Ar_37_Ca_std/Ar_37_Ca + constants[1]/constants[0]) * Ar_39_Ca
+    Ar_39_Ca_std = (np.sqrt((Ar_37_Ca_std/Ar_37_Ca)**2 + (constants[1]/constants[0])**2)) * Ar_39_Ca
     Ar_39_K = Ar_39_m - Ar_39_Ca
     Ar_39_K_std = minusSigma(Ar_39_m_std, Ar_39_Ca_std)
 
