@@ -130,7 +130,7 @@ class Ui_MainWindow(object):
         item = self.ParameetrTable.verticalHeaderItem(14)
         item.setText(_translate("MainWindow", "λ for age calculation"))
         item = self.ParameetrTable.verticalHeaderItem(15)
-        item.setText(_translate("MainWindow", "λ_std for age calculation"))
+        item.setText(_translate("MainWindow", "λ std for age calculation"))
         item = self.ParameetrTable.verticalHeaderItem(16)
         item.setText(_translate("MainWindow", "J value"))
         item = self.ParameetrTable.verticalHeaderItem(17)

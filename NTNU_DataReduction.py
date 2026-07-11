@@ -768,7 +768,7 @@ class App():
 
         if len(mass) > 0 and len(bg) > 0:
             try:
-                self.ratio_result = Utilities.calculateMassRatio(mass, bg, self.parameters[self.parameters_name.index('λ for age calculation')])
+                self.ratio_result = Utilities.calculateMassRatio(mass, bg, self.parameters[self.parameters_name.index('OG Date')])
 
                 for i in range(5):
                     for j in range(5):
@@ -1987,11 +1987,11 @@ class App():
                             self.parameters[self.parameters_name.index("Atmospheric Ratio 40/36(a)_std")],
                             self.parameters[self.parameters_name.index("Atmospheric Ratio 38/36(a)")],
                             self.parameters[self.parameters_name.index("Atmospheric Ratio 38/36(a)_std")],
-                            self.parameters[self.parameters_name.index("λ for age calculation")],
+                            self.parameters[self.parameters_name.index("L")],
                 
                             #self.parameters[self.parameters_name.index("λ_std for age calculation")],
                             
-                            self.parameters[self.parameters_name.index("J_int")])
+                            self.parameters[self.parameters_name.index("J int")])
                             )
                     f.write(",,,,,,SUM,{},,{},,{},,{},,{}".format(ar36a_sum,ar37ca_sum,ar38cl_sum,ar39k_s_sum,ar40r_sum))
                     f.close()
