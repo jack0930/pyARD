@@ -1431,7 +1431,7 @@ def getJVolumeStatistics(file, t,t_std,constants):
     B_std = B*(np.sqrt((Ar_36_m_std/Ar_36_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
     
     D = Ar_37_m / Ar_39_m
-    D_std = D*(np.sqrt(Ar_37_m_std/Ar_37_m)**2 + (Ar_39_m_std/Ar_39_m)**2)
+    D_std = D*(np.sqrt((Ar_37_m_std/Ar_37_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
     
     N = G-C1*B-C3+(C1*C2+C3*C4)*D
     Q = 1.0-C4*D
@@ -1586,11 +1586,3 @@ def calcAge(measurement_filename, J, J_std, J_int, constants):
             J_int, T_int,
             Ar_40_radioactive_ratio, C1, C2, C3, C4,info,t,Min,PK
             ]
-    
-if __name__ == "__main__":
-
-    print(calculateT0(1, filepath='./Data/AS20210429a'))
-    #getT0Statistics(["./Data/AS20210429a.csv", "./Data/AS20210429b.csv", "./Data/AS20210429c.csv"])
-    #print(getAirRatioStatistics(["./Data/ratio_a.csv", "./Data/ratio_b.csv", "./Data/ratio_c.csv"]))
-    #print(calculateMassRatio("./Data/AS20210429a", "./Data/pb20210429a"))
-    #print("test")

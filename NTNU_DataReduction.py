@@ -684,7 +684,7 @@ class App():
         if len(self.measurement) > 0:
             try:
                 # set the cell of the table of the T0 statistics
-                self.J_Calculation_result = Utilities.getJVolumeStatistics(self.measurement, self.J_list[index],self.J_Sigma[index],[float(x) for x in self.parameters[:15]])
+                self.J_Calculation_result = Utilities.getJVolumeStatistics(self.measurement, self.J_list[index],self.J_Sigma[index],[float(x) for x in self.parameters[:16]])
                 
                 for i in range(5):
                     item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.J_Calculation_result[i]))
@@ -709,7 +709,7 @@ class App():
         if len(self.measurement) > 0:
             try:
                 # set the cell of the table of the T0 statistics
-                self.J_Calculation_result = Utilities.getJVolumeStatistics(self.measurement, self.J_list[index],self.J_Sigma[index],[float(x) for x in self.parameters[:15]])
+                self.J_Calculation_result = Utilities.getJVolumeStatistics(self.measurement, self.J_list[index],self.J_Sigma[index],[float(x) for x in self.parameters[:16]])
                 
                 for i in range(5):
                     item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.J_Calculation_result[i]))
@@ -733,7 +733,7 @@ class App():
         if len(self.measurement) > 0:
             try:
                 # set the cell of the table of the T0 statistics
-                self.J_Calculation_result = Utilities.getJVolumeStatistics(self.measurement, self.J_list[index],self.J_Sigma[index],[float(x) for x in self.parameters[:15]])
+                self.J_Calculation_result = Utilities.getJVolumeStatistics(self.measurement, self.J_list[index],self.J_Sigma[index],[float(x) for x in self.parameters[:16]])
                 
                 for i in range(5):
                     item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.J_Calculation_result[i]))
