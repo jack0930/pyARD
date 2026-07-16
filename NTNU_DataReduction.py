@@ -1968,7 +1968,7 @@ class App():
                         ar38cl = float((data[6].split(','))[5]) - float((data[7].split(','))[5]) - float((data[8].split(','))[5])
                         KCa = (float((data[10].split(','))[5])*0.52)/float((data[5].split(','))[5])
                         KCa_std = (KCa)*(np.sqrt((float((data[10].split(','))[6])/float((data[10].split(','))[5]))**2 + (float((data[5].split(','))[6])/float((data[5].split(','))[5]))**2 + (0.02/0.52)**2))
-                        ar36cl = float(self.parameters[self.numParamters[self.parameters_name.index("Production Ratio 38Ar/39Ar(k)")]])*ar38cl
+                        ar36cl = float(self.parameters[self.parameters_name.index("Production Ratio 36Ar/38Ar(cl)")])*ar38cl
                         ra40 = float((data[13].split(','))[5]) +float((data[14].split(','))[5])
                         ra40_std = float((data[13].split(','))[6]) +float((data[14].split(','))[6])
                         f.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
