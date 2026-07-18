@@ -17,6 +17,12 @@ import seaborn as sns; sns.set()
 from datetime import date
 DEBUG = 1
 
+DPformat = "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle"
+MRformat = "Samp#,t,Min,iradiation PK 90%,Mass,Raw,Measurment,Measurement's Sigma,Ratio,Value,Ratio's Sigma"
+JSformat = "file name,36Ar(a)[V],37Ar(ca)[V],39Ar(k)[V],40Ar(r)[V],40Ar(r)(%),39Ar(k)(%),K/Ca,K/Ca Sigma,J value,J Sigma,J Sigma int"
+SSformat = "Samp#,,Ratio,Sigma"
+T0format = "Samp#,Min,T,Date,iradiation PK 90%,Mass,T0,T0_SIGMA,R^2"
+
 # Utilities function
 def ratioSigma(mu_y, sigma_y, mu_x, sigma_x,ratio):
     return np.sqrt((sigma_y/mu_y)**2 + (sigma_x/mu_x)**2)*ratio
@@ -207,7 +213,7 @@ def getDFStatistics_ls(file, mask,constants, Ncolor, Nmaker):
         data = f.readlines()
             
     # check header here
-    if data[0].rstrip() != "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle":
+    if data[0].rstrip() != DPformat:
         raise Exception("Wrong data format!")
     
     i = 0
@@ -363,7 +369,7 @@ def getDFStatistics_sh(file, mask,constants,Ncolor, Nmaker):
         data = f.readlines()
             
     # check header here
-    if data[0].rstrip() != "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle":
+    if data[0].rstrip() != DPformat:
         raise Exception("Wrong data format!")
     
     i = 0
@@ -498,7 +504,7 @@ def getSHStatistics(file, mask,constants):
         data = f.readlines()
             
     # check header here
-    if data[0].rstrip() != "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle":
+    if data[0].rstrip() != DPformat:
         raise Exception("Wrong data format!")
     
     i = 0
@@ -651,7 +657,7 @@ def getDFStatistics_t(file, mask,power):
         data = f.readlines()
             
     # check header here
-    if data[0].rstrip() != "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle":
+    if data[0].rstrip() != DPformat:
         raise Exception("Wrong data format!")
     
     j = 0
@@ -719,7 +725,7 @@ def getAirRatioStatistics(filelist):
             data = f.readlines()
 
         # check header here
-        if data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Mass,Raw,Measurment,Measurement's Sigma,Ratio,Value,Ratio's Sigma":
+        if data[0].rstrip() != MRformat:
             raise Exception("Wrong data format!")
 
         ratios[i, 0] = float(data[4].split(',')[9])
@@ -772,7 +778,7 @@ def getJStatistics(file, mask):
             data = f.readlines()
             
         # check header here
-        if data[0].rstrip() != "file name,36Ar(a)[V],37Ar(ca)[V],39Ar(k)[V],40Ar(r)[V],40Ar(r)(%),39Ar(k)(%),K/Ca,K/Ca Sigma,J value,J Sigma,J Sigma int":
+        if data[0].rstrip() != JSformat:
             raise Exception("Wrong data format!")
 
       
@@ -874,7 +880,7 @@ def getSaltStatistics(file, mask,salt):
             data = f.readlines()
             
         # check header here
-        if data[0].rstrip() != "Samp#,,Ratio,Sigma":
+        if data[0].rstrip() != SSformat:
             raise Exception("Wrong data format!")
 
         if(salt==39 or salt == 38):
@@ -991,7 +997,7 @@ def REgetSaltStatistics(file, mask,salt):
             data = f.readlines()
             
         # check header here
-        if data[0].rstrip() != "Samp#,,Ratio,Sigma":
+        if data[0].rstrip() != SSformat:
             raise Exception("Wrong data format!")
 
         if(salt==39 or salt == 38):
@@ -1096,7 +1102,7 @@ def REgetJStatistics(file, mask):
             data = f.readlines()
             
         # check header here
-        if data[0].rstrip() != "file name,36Ar(a)[V],37Ar(ca)[V],39Ar(k)[V],40Ar(r)[V],40Ar(r)(%),39Ar(k)(%),K/Ca,K/Ca Sigma,J value,J Sigma,J Sigma int":
+        if data[0].rstrip() != JSformat:
             raise Exception("Wrong data format!")
 
       
@@ -1178,7 +1184,7 @@ def getT0Statistics(file, mask):
             data = f.readlines()
             
         # check header here
-        if data[0].rstrip() != "Samp#,Min,T,Date,iradiation PK 90%,Mass,T0,T0_SIGMA,R^2":
+        if data[0].rstrip() != T0format:
             raise Exception("Wrong data format!")
 
         for j in range(5):
@@ -1232,7 +1238,7 @@ def REgetT0Statistics(file, mask):
             data = f.readlines()
             
         # check header here
-        if data[0].rstrip() != "Samp#,Min,T,Date,iradiation PK 90%,Mass,T0,T0_SIGMA,R^2":
+        if data[0].rstrip() != T0format:
             raise Exception("Wrong data format!")
 
         for j in range(5):
@@ -1278,7 +1284,7 @@ def calculateMassRatio(mass_filename, background_filename, OGD):
         data = f.readlines()
        
     # check header here
-    if data[0].rstrip() != "Samp#,Min,T,Date,iradiation PK 90%,Mass,T0,T0_SIGMA,R^2":
+    if data[0].rstrip() != T0format:
         raise Exception("Wrong data format!")
        
     info = (data[1].split(','))[0]
@@ -1299,7 +1305,7 @@ def calculateMassRatio(mass_filename, background_filename, OGD):
         data = f.readlines()
 
     # check header here
-    if data[0].rstrip() != "Samp#,Min,T,Date,iradiation PK 90%,Mass,T0,T0_SIGMA,R^2":
+    if data[0].rstrip() != T0format:
         raise Exception("Wrong data format!")
 
     for i in range(5):
@@ -1328,7 +1334,7 @@ def calculateSlatCa(salt):
         data = f.readlines()
 
     # check header here
-    if data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Mass,Raw,Measurment,Measurement's Sigma,Ratio,Value,Ratio's Sigma":
+    if data[0].rstrip() != MRformat:
         raise Exception("Wrong data format!")
 
     Ar36 = float(data[1].split(',')[6])    
@@ -1355,7 +1361,7 @@ def calculateSlatK(salt):
         data = f.readlines()
 
     # check header here
-    if data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Mass,Raw,Measurment,Measurement's Sigma,Ratio,Value,Ratio's Sigma":
+    if data[0].rstrip() != MRformat:
         raise Exception("Wrong data format!")
 
     Ar36 = float(data[1].split(',')[6])    
@@ -1389,7 +1395,7 @@ def getJVolumeStatistics(file, t,t_std,constants):
         tmp_data = f.readlines()
     
     # check header here
-    if tmp_data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Mass,Raw,Measurment,Measurement's Sigma,Ratio,Value,Ratio's Sigma":
+    if tmp_data[0].rstrip() != MRformat:
         raise Exception("Wrong data format!")
 
     for i in range(5):
@@ -1472,7 +1478,7 @@ def calcAge(measurement_filename, J, J_std, J_int, constants):
         tmp_data = f.readlines()
     
     # check header here
-    if tmp_data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Mass,Raw,Measurment,Measurement's Sigma,Ratio,Value,Ratio's Sigma":
+    if tmp_data[0].rstrip() != MRformat:
         raise Exception("Wrong data format!")
 
     info = (tmp_data[1].split(',')[0])

@@ -259,6 +259,11 @@ class App():
         for i in range(self.widget.count()):
             self.insertLogo(self.widget.widget(i))
 
+        #file format
+        self.ACformat = "Samp#,t,Min,iradiation PK 90%,Variable,Value,Sigma"
+        self.DPformat = "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle"
+        
+
         # others
         self.fitting_function_list = ["Linear", "Average"]
         self.mass_pair = ['Ar39/40', 'Ar36/40', 'Ar39/36', 'Ar40/36', 'Ar38/36']
@@ -1615,7 +1620,7 @@ class App():
                 self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
                 with open(self.Dfilename, 'r') as f:
                     self.data = f.readlines()
-                if self.data[0].rstrip() != "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle":
+                if self.data[0].rstrip() != self.DPformat:
                     raise Exception("Wrong data format!")
                 j = 0
                 for i in range (len(self.data)-2):
@@ -1675,7 +1680,7 @@ class App():
                 self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
                 with open(self.Dfilename, 'r') as f:
                     self.data = f.readlines()
-                if self.data[0].rstrip() != "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle":
+                if self.data[0].rstrip() != self.DPformat:
                     raise Exception("Wrong data format!")
                 j = 0
                 for i in range (len(self.data)-2):
@@ -1942,7 +1947,7 @@ class App():
                     for i, filename in enumerate(filelist):
                         with open(filename, 'r') as d:
                             data = d.readlines()
-                        if data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Variable,Value,Sigma":
+                        if data[0].rstrip() != self.ACformat:
                             raise Exception("Wrong data format!")
                         ar38cl = float((data[6].split(','))[5]) - float((data[7].split(','))[5]) - float((data[8].split(','))[5])
                         ar36a_sum = float((data[2].split(','))[5]) + ar36a_sum
@@ -1955,7 +1960,7 @@ class App():
                     for i, filename in enumerate(filelist):
                         with open(filename, 'r') as d:
                             data = d.readlines()
-                        if data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Variable,Value,Sigma":
+                        if data[0].rstrip() != self.ACformat:
                             raise Exception("Wrong data format!")
                         ar36c = 0
                         ar38c = 0
@@ -1969,10 +1974,24 @@ class App():
                         KCa = (float((data[10].split(','))[5])*0.52)/float((data[5].split(','))[5])
                         KCa_std = (KCa)*(np.sqrt((float((data[10].split(','))[6])/float((data[10].split(','))[5]))**2 + (float((data[5].split(','))[6])/float((data[5].split(','))[5]))**2 + (0.02/0.52)**2))
                         ar36cl = float(self.parameters[self.parameters_name.index("Production Ratio 36Ar/38Ar(cl)")])*ar38cl
-                        ra40 = float((data[13].split(','))[5]) +float((data[14].split(','))[5])
-                        ra40_std = float((data[13].split(','))[6]) +float((data[14].split(','))[6])
+                        ar40 = float((data[13].split(','))[5]) +float((data[14].split(','))[5])
+                        ar40_std = np.sqrt((float((data[13].split(','))[6])**2) +(float((data[14].split(','))[6])**2))
                         f.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
-                            (data[1].split(','))[0],(data[1].split(','))[2],(data[1].split(','))[3],(data[1].split(','))[1],(data[23].split(','))[5],(data[23].split(','))[6],(data[25].split(','))[5],(data[2].split(','))[5],(data[2].split(','))[6],(data[5].split(','))[5],(data[5].split(','))[6],ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(float((data[24].split(','))[5])/1000000),(float((data[24].split(','))[6])/1000000),ar40r,ar39k,ar40r_s,ar39k_s,KCa,KCa_std,(data[2].split(','))[5],(data[2].split(','))[6],ar36c,ar36c,(data[3].split(','))[5],(data[3].split(','))[6],ar36cl,ar36cl,(data[5].split(','))[5],(data[5].split(','))[6],(data[7].split(','))[5],(data[7].split(','))[6],ar38c,ar38c,(data[8].split(','))[5],(data[8].split(','))[6],ar38ca,ar38ca,ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[11].split(','))[5],(data[11].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(data[14].split(','))[5],(data[14].split(','))[6],ar40c,ar40c,(data[15].split(','))[5],(data[15].split(','))[6],(data[19].split(','))[5],(data[19].split(','))[6],ra40,ra40_std,(data[20].split(','))[5],(data[20].split(','))[6],(data[22].split(','))[5],(data[22].split(','))[6],(data[21].split(','))[5],(data[21].split(','))[6],
+                            (data[1].split(','))[0],(data[1].split(','))[2],(data[1].split(','))[3],(data[1].split(','))[1],(data[23].split(','))[5],(data[23].split(','))[6],(data[25].split(','))[5],(data[2].split(','))[5],(data[2].split(','))[6],(data[5].split(','))[5],(data[5].split(','))[6],ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(float((data[24].split(','))[5])/1000000),(float((data[24].split(','))[6])/1000000),
+                            ar40r,ar39k,ar40r_s,ar39k_s,KCa,KCa_std,
+                            (data[2].split(','))[5],(data[2].split(','))[6],
+                            ar36c,ar36c,
+                            (data[3].split(','))[5],(data[3].split(','))[6],
+                            ar36cl,ar36cl,
+                            (data[5].split(','))[5],(data[5].split(','))[6],(data[7].split(','))[5],(data[7].split(','))[6],
+                            ar38c,ar38c,
+                            (data[8].split(','))[5],(data[8].split(','))[6],
+                            ar38ca,ar38ca,ar38cl,ar38cl,
+                            (data[10].split(','))[5],(data[10].split(','))[6],(data[11].split(','))[5],(data[11].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(data[14].split(','))[5],(data[14].split(','))[6],
+                            ar40c,ar40c,
+                            (data[15].split(','))[5],(data[15].split(','))[6],(data[19].split(','))[5],(data[19].split(','))[6],
+                            ar40,ar40_std,
+                            (data[20].split(','))[5],(data[20].split(','))[6],(data[22].split(','))[5],(data[22].split(','))[6],(data[21].split(','))[5],(data[21].split(','))[6],
                             self.parameters[self.parameters_name.index("Production Ratio 39Ar/37Ar(ca)")],
                             self.parameters[self.parameters_name.index("Production Ratio 39Ar/37Ar(ca) std")], 
                             self.parameters[self.parameters_name.index("Production Ratio 36Ar/37Ar(ca)")],
@@ -2000,7 +2019,7 @@ class App():
                 f.close()
                 
     def toDPR(self):
-        filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select files (csv) to get Datum statistics" , self.data_folder+'MassRatio/', "(*.csv)") # select list of files
+        filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select files (csv) to get Datum statistics" , self.data_folder+'Publish/', "(*.csv)") # select list of files
         if len(filelist) > 0:
             try:
                 file, _ = QtWidgets.QFileDialog.getSaveFileName(self.widget, "Save Datum result" , self.data_folder+'Publish/', "(*.csv)")
@@ -2010,15 +2029,20 @@ class App():
                     for i, filename in enumerate(filelist):
                         with open(filename, 'r') as d:
                             data = d.readlines()
-                        if data[0].rstrip() != "Samp#,t,Min,iradiation PK 90%,Mass,Raw,Measurment,Measurement's Sigma,Ratio,Value,Ratio's Sigma":
+                        if data[0].rstrip() != self.ACformat:
                             raise Exception("Wrong data format!")
-                        ar3940 = float((data[1].split(','))[9])
-                        ar3940std = float((data[1].split(','))[10])
-                        ar3640 = float((data[2].split(','))[9])
-                        ar3640std = float((data[2].split(','))[10])
-                        ar3936 = float((data[3].split(','))[9])
-                        ar3936std = float((data[3].split(','))[10])
-                        ar39 = float((data[4].split(','))[6])
+                        ar39 = float((data[10].split(','))[5])
+                        ar36 = float((data[2].split(','))[5])
+                        ar40 = float((data[12].split(','))[5]) - float((data[15].split(','))[5])
+                        ar39std = float((data[10].split(','))[6])
+                        ar36std = float((data[2].split(','))[6])
+                        ar40std = np.sqrt(float((data[12].split(','))[6])**2 + float((data[15].split(','))[6])**2)
+                        ar3940 = ar39/ar40
+                        ar3940std = np.sqrt((ar39std/ar39)**2 + (ar40std/ar40)**2)*ar3940
+                        ar3640 = ar36/ar40
+                        ar3640std = np.sqrt((ar36std/ar36)**2 + (ar40std/ar40)**2)*ar3640
+                        ar3936 = ar39/ar36
+                        ar3936std = np.sqrt((ar39std/ar39)**2 + (ar36std/ar36)**2)*ar3936
                         f.write("{},{},{},{},{},{},{},{}\n".format(ar3940,ar3940std,ar3640,ar3640std,ar3936,ar3936std,ar39,(data[1].split(','))[0]))
                     f.close()
             except:
