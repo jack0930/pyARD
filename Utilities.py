@@ -1238,7 +1238,7 @@ def calcAge(measurement_filename, J, J_std, J_int, constants):
     B_std = B*(np.sqrt((Ar_36_m_std/Ar_36_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
     
     D = Ar_37_m / Ar_39_m
-    D_std = D*(np.sqrt(Ar_37_m_std/Ar_37_m)**2 + (Ar_39_m_std/Ar_39_m)**2)
+    D_std = D*(np.sqrt((Ar_37_m_std/Ar_37_m)**2 + (Ar_39_m_std/Ar_39_m)**2))
     
     #F = Ar_40_radioactive / Ar_39_K
     #F_std = np.sqrt(G_std**2 + (C1*B_std)**2 + ((C4*G - C1*C4*B + C1*C2)*D_std)**2)
@@ -1270,7 +1270,7 @@ def calcAge(measurement_filename, J, J_std, J_int, constants):
     T = np.log(1 + J*F) / constants[14]
     T_std = np.sqrt((J**2 * F_std**2 + F**2 * J_std**2)/ ((constants[14]*(1+F*J))**2))
     T_int = np.sqrt((J**2 * F_std**2 + F**2 * J_int**2)/ ((constants[14]*(1+F*J))**2))
-
+    
     return [Ar_36_m, Ar_36_m_std, Ar_36_Air, Ar_36_Air_std, Ar_36_Ca, Ar_36_Ca_std,
             Ar_37_m, Ar_37_m_std, Ar_37_Ca, Ar_37_Ca_std,
             Ar_38_m, Ar_38_m_std, Ar_38_Air, Ar_38_Air_std, Ar_38_K, Ar_38_K_std,
