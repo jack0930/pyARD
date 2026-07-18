@@ -875,6 +875,43 @@ class App():
     def toSS(self):             
         self.widget.setCurrentIndex(10)
     
+    def toT0S(self):
+        self.T0filename, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select files (csv) to get T0 statistics" , self.data_folder+'T0/', "(*.csv)") # select list of files
+
+        if len(self.T0filename) > 0:
+            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
+            self.T0_setReselectTable()  # setup the reselect table here
+            self.mask = np.ones(len(self.T0filename))
+                   
+                # set the cell of the table of the T0 statistics
+            self.T0_statistics_result,self.mask,og_result,re_n = Utilities.getT0Statistics(self.T0filename,self.mask,True)
+                
+            for j in range(self.ReselectDialog.ReselectTable.columnCount()):
+                if self.mask[j] == 0:
+                        item = self.ReselectDialog.ReselectTable.item(0,j)
+                        item.setCheckState(QtCore.Qt.Unchecked)
+                
+                for i in range(5):
+                    for j in range(2):
+                        item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(og_result[i, j]))
+                        item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
+                        self.T0StatisticsPage.tableWidget.setItem(j, i, item)
+                    for j in range(2):
+                        item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.T0_statistics_result[i, j]))
+                        item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
+                        self.T0StatisticsPage.tableWidget.setItem(j+2, i, item)
+
+                # set # of selected files
+                self.T0StatisticsPage.numSelectedFiles.setText("n={} RE n={}".format(len(self.T0filename),re_n))
+                self.T0StatisticsPage.numSelectedFiles.setFont(QtGui.QFont('Times', 12))
+
+                # set image
+                self.T0StatisticsPage.photo.setPixmap(QtGui.QPixmap(self.work_dir+".work/T0S.png"))
+
+                # show the page
+                self.TableAdjust(self.T0StatisticsPage.tableWidget)
+                self.widget.setCurrentIndex(2)
+    
     def T0_setReselectTable(self):
         w = self.ReselectDialog.frameGeometry().width()
         h = self.ReselectDialog.frameGeometry().height()
@@ -913,7 +950,7 @@ class App():
             else:
                 self.mask[j] = 1
         
-        self.T0_statistics_result,re_n = Utilities.REgetT0Statistics(self.T0filename,self.mask)
+        self.T0_statistics_result,re_n = Utilities.getT0Statistics(self.T0filename,self.mask,False)
         for i in range(5):
                     for j in range(2):
                         item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.T0_statistics_result[i, j]))
@@ -929,9 +966,46 @@ class App():
                
         # show the page
         self.TableAdjust(self.T0StatisticsPage.tableWidget)
-
       
-    
+    def T0S_save(self):
+        # save statistics
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.widget, "Save T0 Statistics result" , self.data_folder+'Statistics/T0/', "(*.csv)")
+        if len(filename) > 0:
+            f = open(filename, 'w')
+            f.write("Mass,Mean,STD\n")
+            f.writelines(["Ar{},{},{}\n".format(i+36, self.T0_statistics_result[i,0], self.T0_statistics_result[i,1]) for i in range(5)])
+            f.close()
+      
+    # methods for J Statistics
+    # ===============================================================================
+    def toJSS(self):
+        self.Jfilename, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select files (csv) to get J statistics" , self.data_folder+'J value/', "(*.csv)") # select list of files
+
+        if len(self.Jfilename) > 0:
+            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
+            self.J_setReselectTable()  # setup the reselect table here
+            self.mask = np.ones(len(self.Jfilename))
+            
+            # set the cell of the table of the J statistics
+            self.J_statistics_result,self.madk = Utilities.getJStatistics(self.Jfilename,self.mask,True)
+            
+            for j in range(self.ReselectDialog.ReselectTable.columnCount()):
+                if self.mask[j] == 0:
+                    item = self.ReselectDialog.ReselectTable.item(0,j)
+                    item.setCheckState(QtCore.Qt.Unchecked)
+            
+            for i in range(4):
+                item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.J_statistics_result[i]))
+                item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
+                self.JStatisticsPage.tableWidget.setItem(0, i, item)
+
+            # set image
+            self.JStatisticsPage.photo.setPixmap(QtGui.QPixmap(self.work_dir+".work/J.png"))
+
+            # show the page
+            self.TableAdjust(self.JStatisticsPage.tableWidget)
+            self.widget.setCurrentIndex(11)
+            
     def J_setReselectTable(self):
         w = self.ReselectDialog.frameGeometry().width()
         h = self.ReselectDialog.frameGeometry().height()
@@ -971,7 +1045,7 @@ class App():
                 self.mask[j] = 1
             
         # set the cell of the table of the J statistics
-        self.J_statistics_result = Utilities.REgetJStatistics(self.Jfilename,self.mask)
+        self.J_statistics_result = Utilities.getJStatistics(self.Jfilename,self.mask,False)
         for i in range(4):
             item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.J_statistics_result[i]))
             item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
@@ -982,88 +1056,7 @@ class App():
             
         # show the page
         self.TableAdjust(self.JStatisticsPage.tableWidget)
-        
-    def toT0S(self):
-
-        self.T0filename, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select files (csv) to get T0 statistics" , self.data_folder+'T0/', "(*.csv)") # select list of files
-
-        if len(self.T0filename) > 0:
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-            self.T0_setReselectTable()  # setup the reselect table here
-            self.mask = np.ones(len(self.T0filename))
-                   
-                # set the cell of the table of the T0 statistics
-            self.T0_statistics_result,self.mask,og_result,re_n = Utilities.getT0Statistics(self.T0filename,self.mask)
-                
-            for j in range(self.ReselectDialog.ReselectTable.columnCount()):
-                if self.mask[j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(0,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-                
-                for i in range(5):
-                    for j in range(2):
-                        item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(og_result[i, j]))
-                        item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
-                        self.T0StatisticsPage.tableWidget.setItem(j, i, item)
-                    for j in range(2):
-                        item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.T0_statistics_result[i, j]))
-                        item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
-                        self.T0StatisticsPage.tableWidget.setItem(j+2, i, item)
-
-                # set # of selected files
-                self.T0StatisticsPage.numSelectedFiles.setText("n={} RE n={}".format(len(self.T0filename),re_n))
-                self.T0StatisticsPage.numSelectedFiles.setFont(QtGui.QFont('Times', 12))
-
-                # set image
-                self.T0StatisticsPage.photo.setPixmap(QtGui.QPixmap(self.work_dir+".work/T0S.png"))
-
-                # show the page
-                self.TableAdjust(self.T0StatisticsPage.tableWidget)
-                self.widget.setCurrentIndex(2)
-            
-
-    def toJSS(self):
-
-        self.Jfilename, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select files (csv) to get J statistics" , self.data_folder+'J value/', "(*.csv)") # select list of files
-
-        if len(self.Jfilename) > 0:
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-            self.J_setReselectTable()  # setup the reselect table here
-            self.mask = np.ones(len(self.Jfilename))
-            
-            # set the cell of the table of the J statistics
-            self.J_statistics_result,self.madk = Utilities.getJStatistics(self.Jfilename,self.mask)
-            
-            for j in range(self.ReselectDialog.ReselectTable.columnCount()):
-                if self.mask[j] == 0:
-                    item = self.ReselectDialog.ReselectTable.item(0,j)
-                    item.setCheckState(QtCore.Qt.Unchecked)
-            
-            for i in range(4):
-                item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.J_statistics_result[i]))
-                item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
-                self.JStatisticsPage.tableWidget.setItem(0, i, item)
-            
-           
-
-            # set image
-            self.JStatisticsPage.photo.setPixmap(QtGui.QPixmap(self.work_dir+".work/J.png"))
-
-            # show the page
-            self.TableAdjust(self.JStatisticsPage.tableWidget)
-            self.widget.setCurrentIndex(11)
-            
-
-    def T0S_save(self):
-        
-        # save statistics
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.widget, "Save T0 Statistics result" , self.data_folder+'Statistics/T0/', "(*.csv)")
-        if len(filename) > 0:
-            f = open(filename, 'w')
-            f.write("Mass,Mean,STD\n")
-            f.writelines(["Ar{},{},{}\n".format(i+36, self.T0_statistics_result[i,0], self.T0_statistics_result[i,1]) for i in range(5)])
-            f.close()
-
+   
     def JSS_save(self):
         # save statistics
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.widget, "Save J Statistics result" , self.data_folder+'Statistics/J/', "(*.csv)")
@@ -1153,7 +1146,7 @@ class App():
             self.mask = np.ones(len(self.Saltfilename))
                    
             # set the cell of the table of the J statistics
-            self.Salt_statistics_result,self.madk = Utilities.getSaltStatistics(self.Saltfilename,self.mask,self.salt)
+            self.Salt_statistics_result,self.madk = Utilities.getSaltStatistics(self.Saltfilename,self.mask,self.salt,True)
            
             for j in range(self.ReselectDialog.ReselectTable.columnCount()):
                 if self.mask[j] == 0:
@@ -1213,7 +1206,7 @@ class App():
                 self.mask[j] = 1
             
         # set the cell of the table of the Salt statistics
-        self.Salt_statistics_result = Utilities.REgetSaltStatistics(self.Saltfilename,self.mask,self.salt)
+        self.Salt_statistics_result = Utilities.getSaltStatistics(self.Saltfilename,self.mask,self.salt,False)
         for i in range(4):
             item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.Salt_statistics_result[i]))
             item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
@@ -1249,213 +1242,63 @@ class App():
         self.widget.setCurrentIndex(7)
 
     def toLRP_MB(self):
-
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/MB/", "")  # select file
-        self.rawfilename = fdilename.replace(self.rawpath+"/MB/", '')
-        if len(filename) > 0:
-            self.T0type = 'MB'
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-
-            self.LRP_setReselectTable()  # setup the reselect table here
-
-            # collect the raw data
-            if not self.LRP_loadRawData(filename):
-                return
-
-            self.T0_fitting_function = 0  # default fitting function is linear
-            self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
-
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)  # make LRP
-            for i in range(5):
-                for j in range(self.numCycle):
-                    if self.mask[i,j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(i,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-            [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
-            self.T0CalculationPage.photo.setPixmap(
-                QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
-            self.T0CalculationPage.current_fit_func.setText(
-                "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
-
-            # show the page
-            self.widget.setCurrentIndex(1)
-
+        self.T0type = 'MB'
+        self.toT0C()
+        
     def toLRP_PBa(self):
-
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/PBa/", "")  # select file
-        self.rawfilename = filename.replace(self.rawpath+'/PBa/', '')
-
-        if len(filename) > 0:
-            self.T0type = 'PBa'
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-
-            self.LRP_setReselectTable()  # setup the reselect table here
-
-            # collect the raw data
-            if not self.LRP_loadRawData(filename):
-                return
-
-            self.T0_fitting_function = 0  # default fitting function is linear
-            self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
-
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)  # make LRP
-            for i in range(5):
-                for j in range(self.numCycle):
-                    if self.mask[i,j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(i,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-            [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
-            self.T0CalculationPage.photo.setPixmap(
-                QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
-            self.T0CalculationPage.current_fit_func.setText(
-                "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
-
-            # show the page
-            self.widget.setCurrentIndex(1)
+        self.T0type = 'PBa'
 
     def toLRP_AS(self):
-
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/AS/", "")  # select file
-        self.rawfilename = filename.replace(self.rawpath+'/AS/', '')
-
-        if len(filename) > 0:
-            self.T0type = 'AS'
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-
-            self.LRP_setReselectTable()  # setup the reselect table here
-
-            # collect the raw data
-            if not self.LRP_loadRawData(filename):
-                return
-
-            self.T0_fitting_function = 0  # default fitting function is linear
-            self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
-
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)  # make LRP
-            for i in range(5):
-                for j in range(self.numCycle):
-                    if self.mask[i,j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(i,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-            [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
-            self.T0CalculationPage.photo.setPixmap(
-                QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
-            self.T0CalculationPage.current_fit_func.setText(
-                "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
-
-            # show the page
-            self.widget.setCurrentIndex(1)
+        self.T0type = 'AS'
+        self.toT0C()
 
     def toLRP_PBs(self):
-
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/PBs/", "")  # select file
-        self.rawfilename = filename.replace(self.rawpath+'/PBs/', '')
-
-        if len(filename) > 0:
-            self.T0type = 'PBs'
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-
-            self.LRP_setReselectTable()  # setup the reselect table here
-
-            # collect the raw data
-            if not self.LRP_loadRawData(filename):
-                return
-
-            self.T0_fitting_function = 0  # default fitting function is linear
-            self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
-
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)  # make LRP
-            for i in range(5):
-                for j in range(self.numCycle):
-                    if self.mask[i,j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(i,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-            [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
-            self.T0CalculationPage.photo.setPixmap(
-                QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
-            self.T0CalculationPage.current_fit_func.setText(
-                "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
-
-            # show the page
-            self.widget.setCurrentIndex(1)
-
+        self.T0type = 'PBs'
+        self.toT0C()
+            
     def toLRP_SP(self):
-
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                           self.rawpath+"/Sample/", "")  # select file
-
-        if len(filename) > 0:
-            self.T0type = 'Sample'
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-
-            self.LRP_setReselectTable()  # setup the reselect table here
-
-            # collect the raw data
-            if not self.LRP_loadRawData(filename):
-                return
-                     
-            self.T0_fitting_function = 0  # default fitting function is linear
-            self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
-
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)  # make LRP
-            for i in range(5):
-                for j in range(self.numCycle):
-                    if self.mask[i,j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(i,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-            [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
-            self.T0CalculationPage.photo.setPixmap(
-                QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
-            self.T0CalculationPage.current_fit_func.setText(
-                "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
-
-            # show the page
-            self.widget.setCurrentIndex(1)
-
+        self.T0type = 'Sample'
+        self.toT0C()
+            
     def toLRP_TP(self):
-
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/Standerd/", "")  # select file
-
-        if len(filename) > 0:
-            self.T0type = 'Standerd'
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
-
-            self.LRP_setReselectTable()  # setup the reselect table here
-
-            # collect the raw data
-            if not self.LRP_loadRawData(filename):
-                return
-
-            self.T0_fitting_function = 0  # default fitting function is linear
-            self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
-
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)  # make LRP
-            for i in range(5):
-                for j in range(self.numCycle):
-                    if self.mask[i,j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(i,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-            [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
-            self.T0CalculationPage.photo.setPixmap(
-                QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
-            self.T0CalculationPage.current_fit_func.setText(
-                "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
-
-            # show the page
-            self.widget.setCurrentIndex(1)
+        self.T0type = 'Standerd'
+        self.toT0C()
             
     def toLRP_ST(self):
-
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+        self.T0type = 'Salt'
+        self.toT0C()
+            
+    def toT0C(self):
+        if self.T0type == 'MB':
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/MB/", "")  # select file
+            self.rawfilename = filename.replace(self.rawpath+"/MB/", '')
+        elif self.T0type == 'PBa':
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/MBPBa/", "")  # select file
+            self.rawfilename = filename.replace(self.rawpath+"/PBa/", '')
+        elif self.T0type == 'AS':
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/AS/", "")  # select file
+            self.rawfilename = filename.replace(self.rawpath+"/AS/", '')
+        elif self.T0type == 'PBs':
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/PBs/", "")  # select file
+            self.rawfilename = filename.replace(self.rawpath+"/PBs/", '')
+        elif self.T0type == 'Sample':
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                            self.rawpath+"/Sample/", "")  # select file
+        elif self.T0type == 'Standerd':
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                            self.rawpath+"/Standerd/", "")  # select file
+        elif self.T0type == 'Salt':
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
                                                             self.rawpath+"/Salt/", "")  # select file
-
+        else:
+            self.Popup(2, "Error!", "T0 type not exist")
+            
+        
         if len(filename) > 0:
-            self.T0type = 'Salt'
             self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
 
             self.LRP_setReselectTable()  # setup the reselect table here
@@ -1467,7 +1310,7 @@ class App():
             self.T0_fitting_function = 0  # default fitting function is linear
             self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
 
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)  # make LRP
+            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, True)  # make LRP
             for i in range(5):
                 for j in range(self.numCycle):
                     if self.mask[i,j] == 0:
@@ -1583,7 +1426,7 @@ class App():
                 else:
                     self.mask[i, j] = 1
 
-        result = Utilities.REcalculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle)
+        result = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, False)
         [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:4]
         self.T0CalculationPage.photo.setPixmap(QtGui.QPixmap(".work/LR.png")) # set image in the page
         self.ReselectDialog.close()

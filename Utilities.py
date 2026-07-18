@@ -42,7 +42,7 @@ fit_func_list = [linear, average]
 
 # functions for button
 # ===============================================================================
-def calculateT0(fit_function_type, v_t, mask,num):
+def calculateT0(fit_function_type, v_t, mask,num, first):
     """
     Input:
     1. fit_function_type: 0 for linear, 1 for average
@@ -90,15 +90,18 @@ def calculateT0(fit_function_type, v_t, mask,num):
         # second linear regression 
         # remove the manually selected outliers if necessary
         if  (R[i] <= 0.8):
-            x = 0
-            for j in range(num-1):
-                r = v[j-x]-f(t[j-x], *popt)
-                if r < 0 :
-                    r = r *-1
-                if r > error and x < 4:
-                    x = x+1
-                    mask[i, j] = 0
-                    n=n+1
+            
+            if first:
+                x = 0
+                for j in range(num-1):
+                    r = v[j-x]-f(t[j-x], *popt)
+                    if r < 0 :
+                        r = r *-1
+                    if r > error and x < 4:
+                        x = x+1
+                        mask[i, j] = 0
+                        n=n+1
+                    
                 if (mask[i, :] == 0).any():
                     selected_indices = np.where(mask[i, :] == 1)[0]
                     removed_indices = np.where(mask[i, :] == 0)[0]
@@ -127,85 +130,6 @@ def calculateT0(fit_function_type, v_t, mask,num):
     plt.close("all")
 
     return [status, T0, T0_SIGMA, R],mask
-
-def REcalculateT0(fit_function_type, v_t, mask,num):
-    """
-    Input:
-    1. fit_function_type: 0 for linear, 1 for average
-
-    2. v_t: raw voltage-time data
-
-    3. mask: table of selected points
-
-    Output:
-    return [status, T0, T0_SIGMA, R^2]
-
-    status: 
-    0 success
-
-    1 failed at fitting data from which the outliers are removed
-    
-    """
-
-    # initialization
-    T0 = np.zeros(5)
-    T0_SIGMA = np.zeros(5)
-    R = np.zeros(5)
-    
-    status = 0
-    fig, axs = plt.subplots(2, 3, figsize = (16,8))
-    f = fit_func_list[fit_function_type]
-
-    # go over Ar 36 to 40
-    for i in range(5):
-        # first linear regression 
-        # fit whole raw data (no outlier is removed)
-        n=0
-        t = v_t[i, :, 1]
-        v = v_t[i, :, 0]
-        popt, _ = curve_fit(f, t, v)
-        T0[i] = f(0, *popt)
-        for j in range(num):
-            if mask[i,j]==0:
-                n=n+1
-        T0_SIGMA[i] = (np.std(np.abs(v - f(t, *popt))))/(np.sqrt((num-n)))  # std of the error
-        
-        axs[i//3, i%3].plot(t, v, marker = 'o', label = "raw data")
-        axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line")
-        R[i] = r2_score(v,f(t, *popt))
-        axs[i//3, i%3].set(xlabel = "t (sec)", ylabel = "mV")
-
-        # second linear regression 
-        # remove the manually selected outliers if necessary
-        if (mask[i, :] == 0).any():
-            selected_indices = np.where(mask[i, :] == 1)[0]
-            removed_indices = np.where(mask[i, :] == 0)[0]
-            
-            t = v_t[i, selected_indices, 1]
-            v = v_t[i, selected_indices, 0]
-            
-            try:
-                popt, _ = curve_fit(f, t, v)
-                T0[i] = f(0, *popt)
-                T0_SIGMA[i] = (np.std(np.abs(v - f(t, *popt))))/(np.sqrt((num-n))) # std of the error of second fit
-                axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line\n(exclude outliers)")
-                R[i] = r2_score(v,f(t, *popt))
-            except:
-                status = 1
-                
-            axs[i//3, i%3].plot(v_t[i, removed_indices, 1], v_t[i, removed_indices, 0], marker = 'x', markersize = 12, linestyle = 'None', color = 'r')
-            axs[i//3, i%3].ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-       
-        axs[i//3, i%3].legend(bbox_to_anchor=(0.7,1.2), loc='upper left')
-        axs[i//3, i%3].set_title("Ar {}\n{} = {} \nerror = {}\nR^2 = {}".format(i+36, r'$T_{0}$', '{:0.5e}'.format(T0[i]), '{:0.5e}'.format(T0_SIGMA[i]),'{:0.5e}'.format(R[i])), loc='left')
-    
-    axs[1,2].axis('off')
-    plt.tight_layout()
-    plt.savefig(".work/LR.png", dpi=200)
-    plt.clf()
-    plt.close("all")
-
-    return [status, T0, T0_SIGMA, R]
 
 def getDFStatistics_ls(file, mask,constants, Ncolor, Nmaker):
     fig, n = plt.subplots()
@@ -758,7 +682,7 @@ def getAirRatioStatistics(filelist):
 
     return statistics,n
 
-def getJStatistics(file, mask):
+def getJStatistics(file, mask, first):
     plt.figure().clear()
     result = np.zeros(len(file))
     std = np.zeros(len(file))
@@ -781,13 +705,13 @@ def getJStatistics(file, mask):
         if data[0].rstrip() != JSformat:
             raise Exception("Wrong data format!")
 
-      
         result[i] = float(data[1].split(',')[9])
         std[i] = float(data[1].split(',')[10])
         mean = mean + (1/(std[i]**2)*result[i])
         mean_std = mean_std + 1/(std[i]**2)
         avg = avg + float(data[1].split(',')[9])
         fx[i] = i+1
+        
     y = result
     y_std = std
     x = fx
@@ -797,11 +721,12 @@ def getJStatistics(file, mask):
     y_stdp = (np.std(y)/len(y)**0.5) + avg
     y_stdn = avg - (np.std(y)/len(y)**0.5)
     
-    for i in range (len(y)):
-        if y[i] < y_stdn:
-            mask[i] = 0
-        if y[i] > y_stdp:
-            mask[i] = 0
+    if first:
+        for i in range (len(y)):
+            if y[i] < y_stdn:
+                mask[i] = 0
+            if y[i] > y_stdp:
+                mask[i] = 0
         
     for i in range (len(y)):
             stdp[i] = y_stdp
@@ -859,7 +784,7 @@ def getJStatistics(file, mask):
 
     return [avg,(y_stdp-avg),mean,mean_std],mask
 
-def getSaltStatistics(file, mask,salt):
+def getSaltStatistics(file,mask,salt,first):
     plt.figure().clear()
     result = np.zeros(len(file))
     std = np.zeros(len(file))
@@ -914,11 +839,12 @@ def getSaltStatistics(file, mask,salt):
     y_stdp = (np.std(y)/len(y)**0.5) + avg
     y_stdn = avg - (np.std(y)/len(y)**0.5)
     
-    for i in range (len(y)):
-        if y[i] < y_stdn:
-            mask[i] = 0
-        if y[i] > y_stdp:
-            mask[i] = 0
+    if first:
+        for i in range (len(y)):
+            if y[i] < y_stdn:
+                mask[i] = 0
+            if y[i] > y_stdp:
+                mask[i] = 0
         
     for i in range (len(y)):
             stdp[i] = y_stdp
@@ -976,207 +902,7 @@ def getSaltStatistics(file, mask,salt):
 
     return [avg,(y_stdp-avg),mean,mean_std],mask
 
-def REgetSaltStatistics(file, mask,salt):
-    plt.figure().clear()
-    result = np.zeros(len(file))
-    std = np.zeros(len(file))
-    fx = np.zeros(len(file))
-    avg_y = np.zeros(len(file))
-    stdp = np.zeros(len(file))
-    stdn = np.zeros(len(file))
-    mean_y = np.zeros(len(file))
-    meanp = np.zeros(len(file))
-    meann = np.zeros(len(file))
-    avg = 0.0
-    mean = 0.0
-    mean_std = 0.0
-    
-    
-    for i, filename in enumerate(file):
-        with open(filename, 'r') as f:
-            data = f.readlines()
-            
-        # check header here
-        if data[0].rstrip() != SSformat:
-            raise Exception("Wrong data format!")
-
-        if(salt==39 or salt == 38):
-            result[i] = float(data[2].split(',')[2])
-            avg = avg + float(data[2].split(',')[2])
-            std[i] = float(data[2].split(',')[3])
-            mean = mean + (1/(std[i]**2)*result[i])
-            mean_std = mean_std + 1/(std[i]**2)
-            fx[i] = i+1
-        else:
-            result[i] = float(data[1].split(',')[2])
-            avg = avg + float(data[1].split(',')[2])
-            std[i] = float(data[1].split(',')[3])
-            mean = mean + (1/(std[i]**2)*result[i])
-            mean_std = mean_std + 1/(std[i]**2)
-            fx[i] = i+1
-            
-    y = result
-    y_std = std
-    x = fx
-    avg = avg/len(file)
-    mean = mean/mean_std
-    mean_std = np.sqrt(1/mean_std)
-    y_stdp = (np.std(y)/len(y)**0.5) + avg
-    y_stdn = avg - (np.std(y)/len(y)**0.5)
-        
-    for i in range (len(y)):
-            stdp[i] = y_stdp
-            stdn[i] = y_stdn
-            meanp[i] = mean_std + avg
-            meann[i] = avg - mean_std
-            
-    for i, filename in enumerate(file):
-        avg_y[i] = avg
-    plt.plot(x,y,marker = 'o', label = "J data")
-    plt.plot(x,avg_y,linestyle = '-', label = "average") 
-    plt.plot(x,stdp,linestyle = '--', label = "std+") 
-    plt.plot(x,stdn,linestyle = '--', label = "std-") 
-        
-           
-    if (mask[:] == 0).any():
-        avg = 0.0
-        j = 0
-        for i, filename in enumerate(file):
-            if(mask[i]==0):
-                x = np.delete(x,[i-j])
-                np.where(x<i,x,x-1)
-                y = np.delete(y,[i-j])
-                y_std = np.delete(y_std,[i-j])
-                plt.plot(fx[i], result[i], marker = 'x', markersize = 12, linestyle = 'None', color = 'r')
-                j=j+1
-        avg_y = np.zeros(len(y))
-        for i in range (len(y)): 
-            avg = avg+y[i]
-            mean = mean + (1/(y_std[i]**2)*y[i])
-            mean_std = mean_std + 1/(y_std[i]**2)
-        avg = avg/len(y) 
-        mean = mean/mean_std
-        mean_std = np.sqrt(1/mean_std)
-        y_stdp = np.std(y) + avg
-        y_stdn = avg-np.std(y)
-        stdp = np.zeros(len(y))
-        stdn = np.zeros(len(y))
-        for i in range (len(y)):
-            avg_y[i] = avg
-            mean_y[i] = mean
-            stdp[i] = y_stdp
-            stdn[i] = y_stdn
-            meanp[i] = mean_std + avg
-            meann[i] = avg - mean_std
-            
-           
-        plt.plot(x, avg_y, linestyle = '-', label = "average\n(exclude outliers)")
-        plt.plot(x,stdp,linestyle = '--', label = "std+") 
-        plt.plot(x,stdn,linestyle = '--', label = "std-") 
-           
-    #plt.show()
-    plt.savefig(".work/Salt.png", dpi = 200)
-    plt.clf()
-    plt.close("all")
-    
-
-    return [avg,(y_stdp-avg),mean,mean_std]
-
-def REgetJStatistics(file, mask):
-    plt.figure().clear()
-    result = np.zeros(len(file))
-    std = np.zeros(len(file))
-    fx = np.zeros(len(file))
-    avg_y = np.zeros(len(file))
-    stdp = np.zeros(len(file))
-    stdn = np.zeros(len(file))
-    mean_y = np.zeros(len(file))
-    meanp = np.zeros(len(file))
-    meann = np.zeros(len(file))
-    avg = 0.0
-    mean = 0.0
-    mean_std = 0.0
-    
-    for i, filename in enumerate(file):
-        with open(filename, 'r') as f:
-            data = f.readlines()
-            
-        # check header here
-        if data[0].rstrip() != JSformat:
-            raise Exception("Wrong data format!")
-
-      
-        result[i] = float(data[1].split(',')[9])
-        std[i] = float(data[1].split(',')[10])
-        mean = mean + (1/(std[i]**2)*result[i])
-        mean_std = mean_std + 1/(std[i]**2)
-        avg = avg + float(data[1].split(',')[9])
-        fx[i] = i+1
-    y = result
-    y_std = std
-    x = fx
-    avg = avg/len(file)
-    mean = mean/mean_std
-    mean_std = np.sqrt(1/mean_std)
-    y_stdp = (np.std(y)/len(y)**0.5) + avg
-    y_stdn = avg - (np.std(y)/len(y)**0.5)
-    for i in range (len(y)):
-            stdp[i] = y_stdp
-            stdn[i] = y_stdn
-            meanp[i] = mean_std + avg
-            meann[i] = avg - mean_std
-    for i, filename in enumerate(file):
-        avg_y[i] = avg
-    plt.plot(x,y,marker = 'o', label = "J data")
-    plt.plot(x,avg_y,linestyle = '-', label = "average") 
-    plt.plot(x,stdp,linestyle = '--', label = "std+") 
-    plt.plot(x,stdn,linestyle = '--', label = "std-") 
-        
-           
-    if (mask[:] == 0).any():
-        avg = 0.0
-        j = 0
-        for i, filename in enumerate(file):
-            if(mask[i]==0):
-                x = np.delete(x,[i-j])
-                np.where(x<i,x,x-1)
-                y = np.delete(y,[i-j])
-                y_std = np.delete(y_std,[i-j])
-                plt.plot(fx[i], result[i], marker = 'x', markersize = 12, linestyle = 'None', color = 'r')
-                j=j+1
-        avg_y = np.zeros(len(y))
-        for i in range (len(y)): 
-            avg = avg+y[i]
-            mean = mean + (1/(y_std[i]**2)*y[i])
-            mean_std = mean_std + 1/(y_std[i]**2)
-        avg = avg/len(y) 
-        mean = mean/mean_std
-        mean_std = np.sqrt(1/mean_std)
-        y_stdp = np.std(y) + avg
-        y_stdn = avg-np.std(y)
-        stdp = np.zeros(len(y))
-        stdn = np.zeros(len(y))
-        for i in range (len(y)):
-            avg_y[i] = avg
-            mean_y[i] = mean
-            stdp[i] = y_stdp
-            stdn[i] = y_stdn
-            meanp[i] = mean_std + avg
-            meann[i] = avg - mean_std
-            
-           
-        plt.plot(x, avg_y, linestyle = '-', label = "average\n(exclude outliers)")
-        plt.plot(x,stdp,linestyle = '--', label = "std+") 
-        plt.plot(x,stdn,linestyle = '--', label = "std-") 
-           
-    #plt.show()
-    plt.savefig(".work/J.png", dpi = 200)
-    plt.clf()
-    plt.close("all")
-
-    return [avg,(y_stdp-avg),mean,mean_std]
-
-def getT0Statistics(file, mask):
+def getT0Statistics(file, mask, first):
     result = np.zeros((len(file), 5))
     
     for i, filename in enumerate(file):
@@ -1196,9 +922,10 @@ def getT0Statistics(file, mask):
     for i in range(5):
         statistics[i, 0] = np.mean(result[:, i])
         statistics[i, 1] = np.std(result[:, i])
-        for j in range(len(result)):
-            if abs(result[j,i] - statistics[i,0]) > (statistics[i,1]/2)+statistics[i,0] :
-                mask[j] = 0
+        if first:
+            for j in range(len(result)):
+                if abs(result[j,i] - statistics[i,0]) > (statistics[i,1]/2)+statistics[i,0] :
+                    mask[j] = 0
 
     k = 0
     for i in range(len(result)):
@@ -1230,53 +957,10 @@ def getT0Statistics(file, mask):
 
     return restatistics,mask,statistics,n
 
-def REgetT0Statistics(file, mask):
-    result = np.zeros((len(file), 5))
-    
-    for i, filename in enumerate(file):
-        with open(filename, 'r') as f:
-            data = f.readlines()
-            
-        # check header here
-        if data[0].rstrip() != T0format:
-            raise Exception("Wrong data format!")
-
-        for j in range(5):
-            result[i, j] = float(data[j+1].split(',')[6])
-
-    # calculate statistics
-    k = 0
-    for i in range(len(result)):
-        if mask[i] == 0:
-            result = np.delete(result,i-k,0)             
-            k +=1
-       
-    n = len(result)
-    statistics = np.zeros((5, 2))
-
-    for i in range(5):
-        statistics[i, 0] = np.mean(result[:, i])
-        statistics[i, 1] = np.std(result[:, i])
-    
-    # plot T0 distribution
-    fig, axs = plt.subplots(1, 5, figsize = (12,4))
-    for i in range(5):
-        axs[i].plot(np.zeros(len(result)), result[:, i], marker = 'x', markersize = 10, linestyle = 'None')
-        axs[i].errorbar(0, statistics[i, 0], yerr = statistics[i, 1], color = 'k', capthick = 2, capsize = 3, marker = '_', markersize = 15)
-        axs[i].set_aspect(7/axs[i].get_data_ratio())
-        axs[i].axes.get_xaxis().set_visible(False)  # remove the x-axis and its ticks
-        axs[i].set_title("Ar {}".format(36+i))
-
-    #plt.show()
-    plt.savefig(".work/T0S.png", dpi = 200)
-    plt.clf()
-    plt.close("all")
-
-    return statistics,n
-
-pair_indices = [[3, 4], [0, 4], [3, 0], [4, 0], [2, 0]]
-#               39/40    36/40   39/36   40/36   38/36
 def calculateMassRatio(mass_filename, background_filename, OGD):
+    
+    pair_indices = [[3, 4], [0, 4], [3, 0], [4, 0], [2, 0]]
+    #               39/40    36/40   39/36   40/36   38/36
     raw = np.zeros((5, 2))
     preline = np.zeros((5,2))
 
