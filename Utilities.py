@@ -90,7 +90,6 @@ def calculateT0(fit_function_type, v_t, mask,num, first):
         # second linear regression 
         # remove the manually selected outliers if necessary
         if  (R[i] <= 0.8):
-            
             if first:
                 x = np.zeros((num,2))
                 z = 0
@@ -109,8 +108,8 @@ def calculateT0(fit_function_type, v_t, mask,num, first):
                     if x[j,0] != 0:    
                         mask[i, int(x[j,1])] = 0
                         n=n+1
-                    
-                if (mask[i, :] == 0).any():
+            
+            if (mask[i, :] == 0).any():
                     selected_indices = np.where(mask[i, :] == 1)[0]
                     removed_indices = np.where(mask[i, :] == 0)[0]
                 

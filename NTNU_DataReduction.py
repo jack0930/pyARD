@@ -950,7 +950,7 @@ class App():
             else:
                 self.mask[j] = 1
         
-        self.T0_statistics_result,re_n = Utilities.getT0Statistics(self.T0filename,self.mask,False)
+        self.T0_statistics_result,re_n,self.mask = Utilities.getT0Statistics(self.T0filename,self.mask,False)
         for i in range(5):
                     for j in range(2):
                         item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.T0_statistics_result[i, j]))
@@ -1045,7 +1045,7 @@ class App():
                 self.mask[j] = 1
             
         # set the cell of the table of the J statistics
-        self.J_statistics_result = Utilities.getJStatistics(self.Jfilename,self.mask,False)
+        self.J_statistics_result,self.mask = Utilities.getJStatistics(self.Jfilename,self.mask,False)
         for i in range(4):
             item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.J_statistics_result[i]))
             item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
@@ -1206,7 +1206,7 @@ class App():
                 self.mask[j] = 1
             
         # set the cell of the table of the Salt statistics
-        self.Salt_statistics_result = Utilities.getSaltStatistics(self.Saltfilename,self.mask,self.salt,False)
+        self.Salt_statistics_result,self.mask = Utilities.getSaltStatistics(self.Saltfilename,self.mask,self.salt,False)
         for i in range(4):
             item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.Salt_statistics_result[i]))
             item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
@@ -1426,7 +1426,7 @@ class App():
                 else:
                     self.mask[i, j] = 1
 
-        result = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, False)
+        result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, False)
         [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:4]
         self.T0CalculationPage.photo.setPixmap(QtGui.QPixmap(".work/LR.png")) # set image in the page
         self.ReselectDialog.close()
@@ -1443,7 +1443,7 @@ class App():
     def LRP_switch_fitting_func(self, fit_func_type):
         
         self.T0_fitting_function = fit_func_type
-        result = Utilities.REcalculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle) # make LRP
+        result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, False) # make LRP
         [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:4]
         self.T0CalculationPage.photo.setPixmap(QtGui.QPixmap(".work/LR.png")) # set image in the page
         self.T0CalculationPage.current_fit_func.setText("Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
