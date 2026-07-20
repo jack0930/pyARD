@@ -1247,6 +1247,7 @@ class App():
         
     def toLRP_PBa(self):
         self.T0type = 'PBa'
+        self.toT0C()
 
     def toLRP_AS(self):
         self.T0type = 'AS'
