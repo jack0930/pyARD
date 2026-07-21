@@ -1276,7 +1276,7 @@ class App():
             self.rawfilename = filename.replace(self.rawpath+"/MB/", '')
         elif self.T0type == 'PBa':
             filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                                self.rawpath+"/MBPBa/", "")  # select file
+                                                                self.rawpath+"/PBa/", "")  # select file
             self.rawfilename = filename.replace(self.rawpath+"/PBa/", '')
         elif self.T0type == 'AS':
             filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",

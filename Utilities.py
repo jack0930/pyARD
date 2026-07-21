@@ -86,7 +86,7 @@ def calculateT0(fit_function_type, v_t, mask,num, first):
         axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line")
         R[i] = r2_score(v,f(t, *popt))
         axs[i//3, i%3].set(xlabel = "t (sec)", ylabel = "mV")
-        error = T0_SIGMA[i]*3
+        error = T0_SIGMA[i]*2
         # second linear regression 
         # remove the manually selected outliers if necessary
         if  (R[i] <= 0.8):
