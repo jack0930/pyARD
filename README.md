@@ -1,13 +1,17 @@
 ![logo](.work/logo.png)
 # pyADR
 ## Introduction
-pyADR is created by An-Jun (Andrew) Liu and is to automate Professor Mary Yeh's ArAr experiment data reduction process by providing a GUI that provides its own data analysis tools.
-The following functions are provided:
+pyADR is originaly created by An-Jun (Andrew) Liu (https://github.com/AndrewLiu0725/pyADR.git) and modify by Jack Lin. Is to automate Professor Mary Yeh's ArAr experiment data reduction process by providing a GUI that provides its own data analysis tools.
+The following are functions are provided:
 1. T0 calculation
-2. T0 statistics
-3. Sample Measurement T0 and mass ratio calculation
-4. Air ratio statistics
-5. Age calculation
+2. Mass ratio
+3. J Calculation
+4. Salt Calculation
+5. Parameter Setting
+6. Age calculation
+7. Statistics
+8. Diagram Plots
+9. Datum Publication
 
 ## Prerequisites
 1. Anaconda3 (recommeded for Windows users)
@@ -22,11 +26,14 @@ The following functions are provided:
     * matplotlib
     * scipy
     * requests
+    * datetime
 4. Additional python related modules for installation:
     * platform
     * subprocess
     * os
     * shutil
+    * winotify
+    * tkinter
 
 ## User Guide
 ### Installation
