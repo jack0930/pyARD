@@ -89,43 +89,42 @@ def calculateT0(fit_function_type, v_t, mask,num, first):
         error = T0_SIGMA[i]*2
         # second linear regression 
         # remove the manually selected outliers if necessary
-        if  (R[i] <= 0.8):
-            if first:
-                x = np.zeros((num,2))
-                z = 0
-                for j in range(num-1):
-                    r = v[j]-f(t[j], *popt)
-                    if r < 0 :
-                        r = r *-1
-                    if r > error:
-                        x[z,0] = r
-                        x[z,1] = j
-                        z = z+1
-                
-                x = x[(-x[:,0]).argsort()]
-                
-                for j in range(4):
-                    if x[j,0] != 0:    
-                        mask[i, int(x[j,1])] = 0
-                        n=n+1
+        if  (R[i] <= 0.8 and first):
+            x = np.zeros((num,2))
+            z = 0
+            for j in range(num-1):
+                r = v[j]-f(t[j], *popt)
+                if r < 0 :
+                    r = r *-1
+                if r > error:
+                    x[z,0] = r
+                    x[z,1] = j
+                    z = z+1
             
-            if (mask[i, :] == 0).any():
-                    selected_indices = np.where(mask[i, :] == 1)[0]
-                    removed_indices = np.where(mask[i, :] == 0)[0]
+            x = x[(-x[:,0]).argsort()]
+            
+            for j in range(4):
+                if x[j,0] != 0:    
+                    mask[i, int(x[j,1])] = 0
+                    n=n+1
+            
+        if (mask[i, :] == 0).any():
+                selected_indices = np.where(mask[i, :] == 1)[0]
+                removed_indices = np.where(mask[i, :] == 0)[0]
+            
+                t = v_t[i, selected_indices, 1]
+                v = v_t[i, selected_indices, 0]
                 
-                    t = v_t[i, selected_indices, 1]
-                    v = v_t[i, selected_indices, 0]
-                    
-                    try:
-                        popt, _ = curve_fit(f, t, v)
-                        T0[i] = f(0, *popt)
-                        T0_SIGMA[i] = (np.std(np.abs(v - f(t, *popt))))/(np.sqrt((num-n)))  # std of the error of second fit
-                        R[i] = r2_score(v,f(t, *popt))
-                    except:
-                        status = 1
-                    axs[i//3, i%3].plot(v_t[i, removed_indices, 1], v_t[i, removed_indices, 0], marker = 'x', markersize = 12, linestyle = 'None', color = 'r')
-                    axs[i//3, i%3].ticklabel_format(axis='y', style='sci', scilimits=(0,0))          
-            axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line\n(exclude outliers)")
+                try:
+                    popt, _ = curve_fit(f, t, v)
+                    T0[i] = f(0, *popt)
+                    T0_SIGMA[i] = (np.std(np.abs(v - f(t, *popt))))/(np.sqrt((num-n)))  # std of the error of second fit
+                    R[i] = r2_score(v,f(t, *popt))
+                except:
+                    status = 1
+                axs[i//3, i%3].plot(v_t[i, removed_indices, 1], v_t[i, removed_indices, 0], marker = 'x', markersize = 12, linestyle = 'None', color = 'r')
+                axs[i//3, i%3].ticklabel_format(axis='y', style='sci', scilimits=(0,0))          
+        axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line\n(exclude outliers)")
             
         axs[i//3, i%3].legend(bbox_to_anchor=(0.7,1.2), loc='upper left')
         axs[i//3, i%3].set_title("Ar {}\n{} = {} \nerror = {}\nR^2 = {}".format(i+36, r'$T_{0}$', '{:0.5e}'.format(T0[i]), '{:0.5e}'.format(T0_SIGMA[i]),'{:0.5e}'.format(R[i])), loc='left')

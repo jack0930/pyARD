@@ -13,7 +13,6 @@ import os
 import shutil
 from winotify import Notification
 from tkinter import *
-from datetime import date
 
 # import UI
 import UI.HomePage
