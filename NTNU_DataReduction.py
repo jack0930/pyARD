@@ -260,7 +260,7 @@ class App():
 
         #file format
         self.ACformat = "Samp#,t,Min,iradiation PK 90%,Variable,Value,Sigma"
-        self.DPformat = "Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle"
+        self.DPformat = "Samp#,Min,IRR,deg C,J,J_std,36Ar(m),36Ar(m)_std,37Ar(m),37Ar(m)_std,38Ar(m),38Ar(m)_std,39Ar(m),39Ar(m)_std,40Ar(m),40Ar(m)_std,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle"
         
 
         # others
@@ -1779,7 +1779,7 @@ class App():
                 file, _ = QtWidgets.QFileDialog.getSaveFileName(self.widget, "Save Datum result" , self.data_folder+'Publish/', "(*.csv)")
                 if len(file) > 0:
                     f = open(file, 'w')
-                    f.write("Samp#,Min,IRR,deg C,J,J_std,J_int,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle\n")
+                    f.write("Samp#,Min,IRR,deg C,J,J_std,36Ar(m),36Ar(m)_std,37Ar(m),37Ar(m)_std,38Ar(m),38Ar(m)_std,39Ar(m),39Ar(m)_std,40Ar(m),40Ar(m)_std,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle\n")
                     ar36a_sum = 0.0
                     ar37ca_sum = 0.0
                     ar38cl_sum = 0.0
@@ -1819,8 +1819,15 @@ class App():
                         ar36cl = float(self.parameters[self.parameters_name.index("Production Ratio 36Ar/38Ar(cl)")])*ar38cl
                         ar40 = float((data[13].split(','))[5]) +float((data[14].split(','))[5])
                         ar40_std = np.sqrt((float((data[13].split(','))[6])**2) +(float((data[14].split(','))[6])**2))
-                        f.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
-                            (data[1].split(','))[0],(data[1].split(','))[2],(data[1].split(','))[3],(data[1].split(','))[1],(data[23].split(','))[5],(data[23].split(','))[6],(data[25].split(','))[5],(data[2].split(','))[5],(data[2].split(','))[6],(data[5].split(','))[5],(data[5].split(','))[6],ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(float((data[24].split(','))[5])/1000000),(float((data[24].split(','))[6])/1000000),
+                        f.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+                            (data[1].split(','))[0],(data[1].split(','))[2],(data[1].split(','))[3],(data[1].split(','))[1],
+                            (data[23].split(','))[5],(data[23].split(','))[6],
+                            (data[1].split(','))[5],(data[1].split(','))[6],
+                            (data[4].split(','))[5],(data[4].split(','))[6],
+                            (data[6].split(','))[5],(data[6].split(','))[6],
+                            (data[9].split(','))[5],(data[9].split(','))[6],
+                            (data[12].split(','))[5],(data[12].split(','))[6],
+                            (data[2].split(','))[5],(data[2].split(','))[6],(data[5].split(','))[5],(data[5].split(','))[6],ar38cl,ar38cl,(data[10].split(','))[5],(data[10].split(','))[6],(data[13].split(','))[5],(data[13].split(','))[6],(float((data[24].split(','))[5])/1000000),(float((data[24].split(','))[6])/1000000),
                             ar40r,ar39k,ar40r_s,ar39k_s,KCa,KCa_std,
                             (data[2].split(','))[5],(data[2].split(','))[6],
                             ar36c,ar36c,
@@ -1855,7 +1862,7 @@ class App():
                             
                             self.parameters[self.parameters_name.index("J int")])
                             )
-                    f.write(",,,,,,SUM,{},,{},,{},,{},,{}".format(ar36a_sum,ar37ca_sum,ar38cl_sum,ar39k_s_sum,ar40r_sum))
+                    f.write(",,,,,,,,,,,,,,,SUM,{},,{},,{},,{},,{}".format(ar36a_sum,ar37ca_sum,ar38cl_sum,ar39k_s_sum,ar40r_sum))
                     f.close()
             except:
                 self.Popup(2, "Error!", "Please check the selected data format!")
