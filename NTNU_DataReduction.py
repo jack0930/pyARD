@@ -18,6 +18,7 @@ from tkinter import *
 import UI.HomePage
 import UI.LinearRegression
 import UI.T0Statistics
+import UI.MassRatioBulkSelect
 import UI.MassRatio
 import UI.JCalculation
 import UI.ReselectDialog
@@ -25,6 +26,7 @@ import UI.ParameterSetting
 import UI.AirRatioStatistics
 import UI.AgeCalculation
 import UI.TypeSelect
+import UI.T0BulkSelect
 import UI.SaltCalculation
 import UI.JSelect
 import UI.StatSelect
@@ -48,11 +50,13 @@ class HomePage(QtWidgets.QMainWindow, UI.HomePage.Ui_MainWindow):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        
-    #def resizeEvent(self, event):
-        
 
 class TypeSelect(QtWidgets.QMainWindow, UI.TypeSelect.Ui_MainWindow):
+    def __init__(self, parent=None):
+        QtWidgets.QMainWindow.__init__(self, parent)
+        self.setupUi(self)
+        
+class T0BulkSelect(QtWidgets.QMainWindow, UI.T0BulkSelect.Ui_MainWindow):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
@@ -105,6 +109,11 @@ class AirRatioStatistics(QtWidgets.QMainWindow, UI.AirRatioStatistics.Ui_MainWin
         self.Tsize =[210, 490+event.size().height()-700, 301, 111]
         self.RatioTable.setGeometry(QtCore.QRect(self.Tsize[0], self.Tsize[1], self.Tsize[2], self.Tsize[3]))
         self.numSelectedFiles.setGeometry(QtCore.QRect(150, 580+event.size().height()-700, 200, 31))
+        
+class MassRatioBulkSelect(QtWidgets.QMainWindow, UI.MassRatioBulkSelect.Ui_MainWindow):
+    def __init__(self, parent=None):
+        QtWidgets.QMainWindow.__init__(self, parent)
+        self.setupUi(self)
         
 class MassRatio(QtWidgets.QMainWindow, UI.MassRatio.Ui_MainWindow):
     def __init__(self, parent=None):
@@ -213,6 +222,7 @@ class App():
         self.app = QtWidgets.QApplication(sys.argv)
         self.HomePage = HomePage()
         self.T0CalculationPage = LinearRegressionPage()
+        self.T0BulkSelectPage = T0BulkSelect()
         self.TypeSelect = TypeSelect()
         self.ReselectDialog = ReselectTable()
         self.StatSelectPage = StatSelect()
@@ -220,6 +230,7 @@ class App():
         self.T0StatisticsPage = T0Statistics()
         self.AirRatioStatisticsPage = AirRatioStatistics()
         self.SaltStatPage = SaltStat()
+        self.MassRatioBulkSelectPage = MassRatioBulkSelect()
         self.MassRatioPage = MassRatio()
         self.JCalculationPage = JCalculation()
         self.JSelectPage = JSelect()
@@ -254,13 +265,15 @@ class App():
         self.widget.addWidget(self.SaltStatPage) #p17
         self.widget.addWidget(self.SaltStatSelectPage) #p18
         self.widget.addWidget(self.DatumSelectPage) #p19
+        self.widget.addWidget(self.T0BulkSelectPage) #p20
+        self.widget.addWidget(self.MassRatioBulkSelectPage) #p21
         self.widget.resize(800, 700)
         for i in range(self.widget.count()):
             self.insertLogo(self.widget.widget(i))
 
         #file format
         self.ACformat = "Samp#,t,Min,iradiation PK 90%,Variable,Value,Sigma"
-        self.DPformat = "Samp#,Min,IRR,deg C,J,J_std,36Ar(m),36Ar(m)_std,37Ar(m),37Ar(m)_std,38Ar(m),38Ar(m)_std,39Ar(m),39Ar(m)_std,40Ar(m),40Ar(m)_std,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle"
+        self.DPformat = "Samp#,Min,IRR,deg C,J,J_std,36Ar(m),36Ar(m)_std,37Ar(m),37Ar(m)_std,38Ar(m),38Ar(m)_std,39Ar(m),39Ar(m)_std,40Ar(m),40Ar(m)_std,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,? std"
         
 
         # others
@@ -292,9 +305,9 @@ class App():
 
         # deal with click or keyin events
         # click button on Homepage
-        self.HomePage.LRP.clicked.connect(self.toTS)
+        self.HomePage.LRP.clicked.connect(self.toT0BS)
         self.HomePage.T0S.clicked.connect(self.toSS)
-        self.HomePage.MR.clicked.connect(self.toMR)
+        self.HomePage.MR.clicked.connect(self.toMRBS)
         self.HomePage.JV.clicked.connect(self.toJS)
         self.HomePage.AC.clicked.connect(self.toAC)
         self.HomePage.SC.clicked.connect(self.toSCS)
@@ -304,6 +317,14 @@ class App():
         self.HomePage.actionParameter_Setting.triggered.connect(self.toPS)
         self.HomePage.actionAbout_pyADR.triggered.connect(self.systemInfo)
         self.HomePage.actionCheck_Update.triggered.connect(self.checkVersion)
+        
+        # click button on T0 Bulk Select
+        self.T0BulkSelectPage.Single.clicked.connect(self.toT0SF)
+        self.T0BulkSelectPage.Bulk.clicked.connect(self.toT0B)
+        self.T0BulkSelectPage.actionParameter_Setting.triggered.connect(self.toPS)
+        self.T0BulkSelectPage.actionAbout_pyADR.triggered.connect(self.systemInfo)
+        self.T0BulkSelectPage.actionCheck_Update.triggered.connect(self.checkVersion)
+        self.T0BulkSelectPage.goHome.triggered.connect(self.toMain)
 
         # click button on TypeSelect
         self.TypeSelect.MB.clicked.connect(self.toLRP_MB)
@@ -369,6 +390,14 @@ class App():
         self.AirRatioStatisticsPage.return_2.clicked.connect(self.toMain)
         self.AirRatioStatisticsPage.save.clicked.connect(self.ARS_save)
         self.AirRatioStatisticsPage.new_2.clicked.connect(self.toSS)
+
+        # click button on Mass Ratio page
+        self.MassRatioBulkSelectPage.Single.clicked.connect(self.toMRSF)
+        self.MassRatioBulkSelectPage.Bulk.clicked.connect(self.toMRB)
+        self.MassRatioBulkSelectPage.actionParameter_Setting.triggered.connect(self.toPS)
+        self.MassRatioBulkSelectPage.actionAbout_pyADR.triggered.connect(self.systemInfo)
+        self.MassRatioBulkSelectPage.actionCheck_Update.triggered.connect(self.checkVersion)
+        self.MassRatioBulkSelectPage.goHome.triggered.connect(self.toMain)
 
         # click button on Mass Ratio page
         self.MassRatioPage.return_2.clicked.connect(self.toMain)
@@ -765,32 +794,59 @@ class App():
 
     # methods for Mass Ratio
     # ===============================================================================
+    def toMRBS(self):
+        self.widget.setCurrentIndex(21)
+    
+    def toMRB(self):
+        self.MRB = True
+        self.toMR()
+        
+    def toMRSF(self):
+        self.MRB = False
+        self.toMR()
+    
     def toMR(self):
-        # select mass and preline
-        mass, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select mass file (csv)" , self.data_folder, "(*.csv)")
-        bg, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select preline file (csv)" , self.data_folder, "(*.csv)")
-
-        if len(mass) > 0 and len(bg) > 0:
-            try:
-                self.ratio_result = Utilities.calculateMassRatio(mass, bg, self.parameters[self.parameters_name.index('OG Date')])
-
-                for i in range(5):
-                    for j in range(5):
-                        item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.ratio_result[i][j]))
-                       
-                        item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
-                        if i < 3:
-                            self.MassRatioPage.ValueTable.setItem(j, i, item)
-                        else:
-                            self.MassRatioPage.RatioTable.setItem(j, i-3, item)
-
-                self.TableAdjust(self.MassRatioPage.ValueTable)
-                self.TableAdjust(self.MassRatioPage.RatioTable)
-                self.widget.setCurrentIndex(3)
-            except:
-                self.Popup(2, "Error!", "Please check the selected data format!")
+        if self.MRB:
+            # select mass and preline
+            massliest, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select mass file (csv)" , self.data_folder, "(*.csv)")
+            bg, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select preline file (csv)" , self.data_folder, "(*.csv)")
+            
+            for i, filename in enumerate(massliest):
+                if len(massliest[1]) > 0 and len(bg) > 0:
+                    try:
+                        self.ratio_result = Utilities.calculateMassRatio(massliest[1], bg, self.parameters[self.parameters_name.index('OG Date')])
+                    except:
+                        self.Popup(2, "Error!", "Please check the selected data format!")
+                else:
+                    self.Popup(2, "Wrong Usage!", "Please select exactly one mass file first and then eactly one preline file")
+                    
+                self.MR_save()
         else:
-            self.Popup(2, "Wrong Usage!", "Please select exactly one mass file first and then eactly one preline file")
+            # select mass and preline
+            mass, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select mass file (csv)" , self.data_folder, "(*.csv)")
+            bg, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select preline file (csv)" , self.data_folder, "(*.csv)")
+
+            if len(mass) > 0 and len(bg) > 0:
+                try:
+                    self.ratio_result = Utilities.calculateMassRatio(mass, bg, self.parameters[self.parameters_name.index('OG Date')])
+
+                    for i in range(5):
+                        for j in range(5):
+                            item = QtWidgets.QTableWidgetItem('{:0.5e}'.format(self.ratio_result[i][j]))
+                           
+                            item.setFlags(QtCore.Qt.ItemIsEnabled) # disable edit
+                            if i < 3:
+                                self.MassRatioPage.ValueTable.setItem(j, i, item)
+                            else:
+                                self.MassRatioPage.RatioTable.setItem(j, i-3, item)
+
+                    self.TableAdjust(self.MassRatioPage.ValueTable)
+                    self.TableAdjust(self.MassRatioPage.RatioTable)
+                    self.widget.setCurrentIndex(3)
+                except:
+                    self.Popup(2, "Error!", "Please check the selected data format!")
+            else:
+                self.Popup(2, "Wrong Usage!", "Please select exactly one mass file first and then eactly one preline file")
 
     def MR_save(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.widget, "Save Measurement T0 result" , self.data_folder+'/MassRatio/', "(*.csv)")
@@ -1237,8 +1293,19 @@ class App():
 
     # methods for T0 Calculation Page
     # ===============================================================================
+    def toT0BS(self):
+        self.widget.setCurrentIndex(20)
+    
     def toTS(self):             
         self.widget.setCurrentIndex(7)
+        
+    def toT0B(self):
+        self.T0B = True
+        self.toTS()
+        
+    def toT0SF(self):
+        self.T0B = False
+        self.toTS()
 
     def toLRP_MB(self):
         self.T0type = 'MB'
@@ -1269,61 +1336,114 @@ class App():
         self.toT0C()
             
     def toT0C(self):
-        if self.T0type == 'MB':
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                                self.rawpath+"/MB/", "")  # select file
-            self.rawfilename = filename.replace(self.rawpath+"/MB/", '')
-        elif self.T0type == 'PBa':
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                                self.rawpath+"/PBa/", "")  # select file
-            self.rawfilename = filename.replace(self.rawpath+"/PBa/", '')
-        elif self.T0type == 'AS':
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                                self.rawpath+"/AS/", "")  # select file
-            self.rawfilename = filename.replace(self.rawpath+"/AS/", '')
-        elif self.T0type == 'PBs':
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                                self.rawpath+"/PBs/", "")  # select file
-            self.rawfilename = filename.replace(self.rawpath+"/PBs/", '')
-        elif self.T0type == 'Sample':
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/Sample/", "")  # select file
-        elif self.T0type == 'Standerd':
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/Standerd/", "")  # select file
-        elif self.T0type == 'Salt':
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
-                                                            self.rawpath+"/Salt/", "")  # select file
-        else:
-            self.Popup(2, "Error!", "T0 type not exist")
+        if self.T0B:
             
-        
-        if len(filename) > 0:
-            self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
+            if self.T0type == 'MB':
+                filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/MB/", "")  # select file
+            elif self.T0type == 'PBa':
+                filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/PBa/", "")  # select file
+            elif self.T0type == 'AS':
+                filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/AS/", "")  # select file
+            elif self.T0type == 'PBs':
+                filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/PBs/", "")  # select file
+            elif self.T0type == 'Sample':
+                filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/Sample/", "")  # select file
+            elif self.T0type == 'Standerd':
+                filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/Standerd/", "")  # select file
+            elif self.T0type == 'Salt':
+                filelist, _ = QtWidgets.QFileDialog.getOpenFileNames(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/Salt/", "")  # select file
+            else:
+                self.Popup(2, "Error!", "T0 type not exist")
+            
+            for i, filename in enumerate(filelist):
+                self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
 
-            self.LRP_setReselectTable()  # setup the reselect table here
+                # collect the raw data
+                if not self.LRP_loadRawData(filelist[i]):
+                    return
 
-            # collect the raw data
-            if not self.LRP_loadRawData(filename):
-                return
+                self.T0_fitting_function = 0  # default fitting function is linear
+                self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
 
-            self.T0_fitting_function = 0  # default fitting function is linear
-            self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
+                result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, True)  # make LRP
+                
+                [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
+                
+                if self.T0type == 'MB':
+                    self.rawfilename = filelist[i].replace(self.rawpath+"/MB/", '')
+                elif self.T0type == 'PBa':
+                    self.rawfilename = filelist[i].replace(self.rawpath+"/PBa/", '')
+                elif self.T0type == 'AS':
+                    self.rawfilename = filelist[i].replace(self.rawpath+"/AS/", '')
+                elif self.T0type == 'PBs':
+                    self.rawfilename = filelist[i].replace(self.rawpath+"/PBs/", '')
+                else:
+                    self.Popup(2, "Error!", "T0 type not exist")
+                    
+                self.LRP_save()
 
-            result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, True)  # make LRP
-            for i in range(5):
-                for j in range(self.numCycle):
-                    if self.mask[i,j] == 0:
-                        item = self.ReselectDialog.ReselectTable.item(i,j)
-                        item.setCheckState(QtCore.Qt.Unchecked)
-            [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
-            self.T0CalculationPage.photo.setPixmap(
-                QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
-            self.T0CalculationPage.current_fit_func.setText(
-                "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
+        else:
+            if self.T0type == 'MB':
+                filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/MB/", "")  # select file
+                self.rawfilename = filename.replace(self.rawpath+"/MB/", '')
+            elif self.T0type == 'PBa':
+                filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/PBa/", "")  # select file
+                self.rawfilename = filename.replace(self.rawpath+"/PBa/", '')
+            elif self.T0type == 'AS':
+                filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/AS/", "")  # select file
+                self.rawfilename = filename.replace(self.rawpath+"/AS/", '')
+            elif self.T0type == 'PBs':
+                filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                    self.rawpath+"/PBs/", "")  # select file
+                self.rawfilename = filename.replace(self.rawpath+"/PBs/", '')
+            elif self.T0type == 'Sample':
+                filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/Sample/", "")  # select file
+            elif self.T0type == 'Standerd':
+                filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/Standerd/", "")  # select file
+            elif self.T0type == 'Salt':
+                filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select file to calculate T0",
+                                                                self.rawpath+"/Salt/", "")  # select file
+            else:
+                self.Popup(2, "Error!", "T0 type not exist")
+                
+            if len(filename) > 0:
+                self.numCycle = int(self.parameters[self.parameters_name.index("numCycle")])
 
-            # show the page
-            self.widget.setCurrentIndex(1)
+                self.LRP_setReselectTable()  # setup the reselect table here
+
+                # collect the raw data
+                if not self.LRP_loadRawData(filename):
+                    return
+
+                self.T0_fitting_function = 0  # default fitting function is linear
+                self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
+
+                result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, True)  # make LRP
+                for i in range(5):
+                    for j in range(self.numCycle):
+                        if self.mask[i,j] == 0:
+                            item = self.ReselectDialog.ReselectTable.item(i,j)
+                            item.setCheckState(QtCore.Qt.Unchecked)
+                [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:]
+                self.T0CalculationPage.photo.setPixmap(
+                    QtGui.QPixmap(self.work_dir + ".work/LR.png"))  # set image in the page
+                self.T0CalculationPage.current_fit_func.setText(
+                    "Current fitting function: {}".format(self.fitting_function_list[self.T0_fitting_function]))
+
+                # show the page
+                self.widget.setCurrentIndex(1)
             
     def LRP_loadRawData(self, filename):
         try:
@@ -1371,7 +1491,8 @@ class App():
             shutil.copyfile(self.work_dir + '.work/LR.png', pn+self.rawfilename+'.png')
             f = open(sn+self.rawfilename+'.csv', 'w')
             f.write("Samp#,Min,T,Date,iradiation PK 90%,Mass,T0,T0_SIGMA,R^2\n")
-            f.writelines(["{},{},{},{},{},Ar{},{},{},{}\n".format(self.info[0],self.info[1],self.info[2],self.info[3],self.info[4],i+36, self.tmp_T0[i], self.tmp_T0_SIGMA[i], self.R[i]) for i in range(5)])
+            f.writelines(["{},{},{},{},{},Ar{},{},{},{}\n"
+                          .format(self.info[0],self.info[1],self.info[2],self.info[3],self.info[4],i+36, self.tmp_T0[i], self.tmp_T0_SIGMA[i], self.R[i]) for i in range(5)])
             f.close()
             self.toast.show()
         else:    
@@ -1779,7 +1900,7 @@ class App():
                 file, _ = QtWidgets.QFileDialog.getSaveFileName(self.widget, "Save Datum result" , self.data_folder+'Publish/', "(*.csv)")
                 if len(file) > 0:
                     f = open(file, 'w')
-                    f.write("Samp#,Min,IRR,deg C,J,J_std,36Ar(m),36Ar(m)_std,37Ar(m),37Ar(m)_std,38Ar(m),38Ar(m)_std,39Ar(m),39Ar(m)_std,40Ar(m),40Ar(m)_std,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,numCycle\n")
+                    f.write("Samp#,Min,IRR,deg C,J,J_std,36Ar(m),36Ar(m)_std,37Ar(m),37Ar(m)_std,38Ar(m),38Ar(m)_std,39Ar(m),39Ar(m)_std,40Ar(m),40Ar(m)_std,36Ar(a),36Ar(a)_std,37Ar(ca),37Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,40Ar(r),40Ar(r)_std,Age(Ma),Age_std(Ma),40Ar(r)(%),39Ar(k)(%),40Ar(r)(%)(step heating),39Ar(k)(%)(step heating),K/Ca,K/Ca_std,Degassing Patterns,36Ar(a),36Ar(a)_std,36Ar(c),36Ar(c)_std,36Ar(ca),36Ar(ca)_std,36Ar(cl),36Ar(cl)_std,37Ar(ca),37Ar(ca)_std,38Ar(a),38Ar(a)_std,38Ar(c),38Ar(c)_std,38Ar(k),38Ar(k)_std,38Ar(ca),38Ar(ca)_std,38Ar(cl),38Ar(cl)_std,39Ar(k),39Ar(k)_std,39Ar(ca),39Ar(ca)_std,40Ar(r),40Ar(r)_std,40Ar(a),40Ar(a)_std,40Ar(c),40Ar(c)_std,40Ar(k),40Ar(k)_std,Additional Parameters,40(r)/39(k),40(r)/39(k)_std,40(r+a),40(r+a)_std,40Ar/39Ar,40Ar/39Ar_std,37Ar/39Ar,37Ar/39Ar_std,36Ar/39Ar,36Ar/39Ar_std,Parameters,39Ar/37Ar(ca),39Ar/37Ar(ca)_std,36Ar/37Ar(ca),36Ar/37Ar(ca)_std,40Ar/39Ar(k),40Ar/39Ar(k)_std,38Ar/39Ar(k),38Ar/39Ar(k)_std,36Ar/38Ar(cl),36Ar/38Ar(cl)_std,40Ar/36Ar(a),40Ar/36Ar(a)_std,38Ar/36Ar(a),38Ar/36Ar(a)_std,?,? std\n")
                     ar36a_sum = 0.0
                     ar37ca_sum = 0.0
                     ar38cl_sum = 0.0
@@ -1857,10 +1978,7 @@ class App():
                             self.parameters[self.parameters_name.index("Atmospheric Ratio 38/36(a)")],
                             self.parameters[self.parameters_name.index("Atmospheric Ratio 38/36(a) std")],
                             self.parameters[self.parameters_name.index("L")],
-                
-                            #self.parameters[self.parameters_name.index("λ_std for age calculation")],
-                            
-                            self.parameters[self.parameters_name.index("J int")])
+                            self.parameters[self.parameters_name.index("L std")])
                             )
                     f.write(",,,,,,,,,,,,,,,SUM,{},,{},,{},,{},,{}".format(ar36a_sum,ar37ca_sum,ar38cl_sum,ar39k_s_sum,ar40r_sum))
                     f.close()
