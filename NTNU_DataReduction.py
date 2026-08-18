@@ -812,9 +812,9 @@ class App():
             bg, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, "Select preline file (csv)" , self.data_folder, "(*.csv)")
             
             for i, filename in enumerate(massliest):
-                if len(massliest[1]) > 0 and len(bg) > 0:
+                if len(massliest[i]) > 0 and len(bg) > 0:
                     try:
-                        self.ratio_result = Utilities.calculateMassRatio(massliest[1], bg, self.parameters[self.parameters_name.index('OG Date')])
+                        self.ratio_result = Utilities.calculateMassRatio(massliest[i], bg, self.parameters[self.parameters_name.index('OG Date')])
                     except:
                         self.Popup(2, "Error!", "Please check the selected data format!")
                 else:
