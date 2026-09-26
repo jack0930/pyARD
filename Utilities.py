@@ -38,14 +38,17 @@ def linear(x, a, b):
 def average(x, a):
     return 0*x + a
 
-fit_func_list = [linear, average]
+def log_linear(x, a, b):
+    return np.exp(b + a*x)
+
+fit_func_list = [linear, average, log_linear]
 
 # functions for button
 # ===============================================================================
-def calculateT0(fit_function_type, v_t, mask,num, first):
+def calculateT0(v_t, mask,num, first):
     """
     Input:
-    1. fit_function_type: 0 for linear, 1 for average
+    1. fit_function_type: 0 for linear, 1 for average, 2 for log linear
 
     2. v_t: raw voltage-time data
 
@@ -62,6 +65,11 @@ def calculateT0(fit_function_type, v_t, mask,num, first):
     """
 
     # initialization
+    T0_com = np.zeros((3,5))
+    T0_SIGMA_com = np.zeros((3,5))
+    R_com = np.zeros((3,5))
+    mask_com = np.ones((3,5,num))
+
     T0 = np.zeros(5)
     T0_SIGMA = np.zeros(5)
     R = np.zeros(5)
@@ -69,72 +77,142 @@ def calculateT0(fit_function_type, v_t, mask,num, first):
     r = 0
     status = 0
     fig, axs= plt.subplots(2, 3, figsize = (16,8))
-    f = fit_func_list[fit_function_type]
+    
 
     # go over Ar 36 to 40
-    for i in range(5):
-        # first linear regression 
-        # fit whole raw data (no outlier is removed)
-        n=0
-        t = v_t[i, :, 1]
-        v = v_t[i, :, 0]
-        popt, _ = curve_fit(f, t, v)
-        T0[i] = f(0, *popt)
-        T0_SIGMA[i] = (np.std(np.abs(v - f(t, *popt))))/(np.sqrt(num))  # std of the error
-        
-        axs[i//3, i%3].plot(t, v, marker = 'o', label = "raw data")
-        axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line")
-        R[i] = r2_score(v,f(t, *popt))
-        axs[i//3, i%3].set(xlabel = "t (sec)", ylabel = "mV")
-        error = T0_SIGMA[i]*2
-        # second linear regression 
-        # remove the manually selected outliers if necessary
-        if  (R[i] <= 0.8 and first):
-            x = np.zeros((num,2))
-            z = 0
-            for j in range(num-1):
-                r = v[j]-f(t[j], *popt)
-                if r < 0 :
-                    r = r *-1
-                if r > error:
-                    x[z,0] = r
-                    x[z,1] = j
-                    z = z+1
+    for j in range(3):
+        f = fit_func_list[j]
+        for i in range(5):
+            # first linear regression 
+            # fit whole raw data (no outlier is removed)
+            t = v_t[i, :, 1]
+            v = v_t[i, :, 0]
+            v_mean = np.mean(v)
+            popt, pcov = curve_fit(f, t, v, maxfev=10000)
+            SST = np.sum((v - v_mean)**2)
+            match j:
+                case 0:     #linear
+                    pred = linear(t, *popt)
+                    residuals = v - pred
+                    RSS = np.sum(residuals**2)
+                    T0_com[j][i] = popt[1]
+                    T0_SIGMA_com[j][i] = np.sqrt(pcov[1,1])
+                    R_com[j][i] = abs(1.0 - RSS/SST if SST > 0 else (1.0 if RSS == 0 else 0.0))
+                case 1:     #average
+                    T0_com[j][i] = v_mean
+                    residuals = v - T0_com[j][i]
+                    RSS = np.sum(residuals**2)
+                    T0_SIGMA_com[j][i] = np.std(v, ddof=1) / np.sqrt(len(v)) if len(v) > 1 else np.inf  # std of the error
+                    R_com[j][i] = 1.0 if SST == 0 else 0.0
+                case 2:     #log
+                    pred_v = log_linear(t, *popt)
+                    residuals = v - pred_v
+                    RSS = np.sum(residuals**2)
+                    T0_com[j][i] = np.exp(popt[1])
+                    T0_SIGMA_com[j][i] =T0_com[j][i] * np.sqrt(pcov[1,1])
+                    R_com[j][i] = abs(1.0 - RSS/SST if SST > 0 else (1.0 if RSS == 0 else 0.0))
+                    
             
-            x = x[(-x[:,0]).argsort()]
-            
-            for j in range(4):
-                if x[j,0] != 0:    
-                    mask[i, int(x[j,1])] = 0
-                    n=n+1
-            
-        if (mask[i, :] == 0).any():
-                selected_indices = np.where(mask[i, :] == 1)[0]
-                removed_indices = np.where(mask[i, :] == 0)[0]
-            
-                t = v_t[i, selected_indices, 1]
-                v = v_t[i, selected_indices, 0]
+            error = T0_SIGMA_com[j][i]*2
+            # second linear regression 
+            # remove the manually selected outliers if necessary
+            if (R_com[j][i] <= 0.8 and first):
+                x = np.zeros((num,2))
+                z = 0
+                n = 0
+                for k in range(num-1):
+                    r = abs(v[k]-f(t[k], *popt))
+                    if r > error:
+                        x[z,0] = r
+                        x[z,1] = k
+                        z = z+1
                 
-                try:
-                    popt, _ = curve_fit(f, t, v)
-                    T0[i] = f(0, *popt)
-                    T0_SIGMA[i] = (np.std(np.abs(v - f(t, *popt))))/(np.sqrt((num-n)))  # std of the error of second fit
-                    R[i] = r2_score(v,f(t, *popt))
-                except:
-                    status = 1
-                axs[i//3, i%3].plot(v_t[i, removed_indices, 1], v_t[i, removed_indices, 0], marker = 'x', markersize = 12, linestyle = 'None', color = 'r')
-                axs[i//3, i%3].ticklabel_format(axis='y', style='sci', scilimits=(0,0))          
-        axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line\n(exclude outliers)")
+                x = x[(-x[:,0]).argsort()]
+                
+                for z in range(4):
+                    if x[z,0] != 0:    
+                        mask_com[j][i][int(x[z,1])] = 0
+                        n=n+1
+
+                if (mask_com[j][i][:] == 0).any():
+                    selected_indices = np.where(mask_com[j][i][:] == 1)[0]
+                    removed_indices = np.where(mask_com[j][i][:] == 0)[0]
+                
+                    t = v_t[i, selected_indices, 1]
+                    v = v_t[i, selected_indices, 0]
+                    v_mean = np.mean(v)
+                    SST = np.sum((v - v_mean)**2)
+                        
+                    try:
+                        popt, _ = curve_fit(f, t, v, maxfev=5000)
+                        match j:
+                            case 0:     #linear
+                                pred = linear(t, *popt)
+                                residuals = v - pred
+                                RSS = np.sum(residuals**2)
+                                T0_com[j][i] = popt[1]
+                                T0_SIGMA_com[j][i] = np.sqrt(pcov[1,1])
+                                R_com[j][i] = abs(1.0 - RSS/SST if SST > 0 else (1.0 if RSS == 0 else 0.0))
+                            case 1:     #average
+                                T0_com[j][i] = v_mean
+                                residuals = v - T0_com[j][i]
+                                RSS = np.sum(residuals**2)
+                                T0_SIGMA_com[j][i] = np.std(v, ddof=1) / np.sqrt(len(v)) if len(v) > 1 else np.inf  # std of the error
+                                R_com[j][i] = 1.0 if SST == 0 else 0.0
+                            case 2:     #log
+                                pred_v = log_linear(t, *popt)
+                                residuals = v - pred_v
+                                RSS = np.sum(residuals**2)
+                                T0_com[j][i] = np.exp(popt[1])
+                                T0_SIGMA_com[j][i] =T0_com[j][i] * np.sqrt(pcov[1,1])
+                                R_com[j][i] = abs(1.0 - RSS/SST if SST > 0 else (1.0 if RSS == 0 else 0.0))
+                    except:
+                        status = 1
+                        
+            print(j)
+            print(i)
+            print(R_com[j][i])
+            print(R[i])
+            print(R_com[j][i] < R[i])
+            print()
+                        
+            if (R_com[j][i] > R[i] and R_com[j][i] > 0.5 and j != 1):
+                print("AAAAAAAA")
+                R[i] = R_com[j][i]
+                T0[i] = T0_com[j][i]
+                T0_SIGMA[i] = T0_SIGMA_com[j][i]
+                for z in range(num):
+                    mask[i,z] = mask_com[j][i][z]
+            elif (R_com[j][i] < R[i] and R_com[j][i] < 0.5 and j == 1):
+                print("BBBBBBb")
+                R[i] = 0
+                T0[i] = T0_com[j][i]
+                T0_SIGMA[i] = T0_SIGMA_com[j][i]
+                for z in range(num):
+                    mask[i,z] = mask_com[j][i][z]
+     
+            axs[i//3, i%3].plot(t, v, marker = 'o', label = "raw data")
+            axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line")
+            axs[i//3, i%3].set(xlabel = "t (sec)", ylabel = "mV")
             
-        axs[i//3, i%3].legend(bbox_to_anchor=(0.7,1.2), loc='upper left')
-        axs[i//3, i%3].set_title("Ar {}\n{} = {} \nerror = {}\nR^2 = {}".format(i+36, r'$T_{0}$', '{:0.5e}'.format(T0[i]), '{:0.5e}'.format(T0_SIGMA[i]),'{:0.5e}'.format(R[i])), loc='left')
-    
+
+            axs[i//3, i%3].plot(v_t[i, removed_indices, 1], v_t[i, removed_indices, 0], marker = 'x', markersize = 12, linestyle = 'None', color = 'r')
+            axs[i//3, i%3].ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+                    
+            axs[i//3, i%3].plot(t, f(t, *popt), linestyle = '--', label = "fitted line\n(exclude outliers)")
+                
+            axs[i//3, i%3].legend(bbox_to_anchor=(0.7,1.2), loc='upper left')
+            axs[i//3, i%3].set_title("Ar {}\n{} = {} \nerror = {}\nR^2 = {}".format(i+36, r'$T_{0}$', '{:0.5e}'.format(T0[i]), '{:0.5e}'.format(T0_SIGMA[i]),'{:0.5e}'.format(R[i])), loc='left')
+            
     axs[1,2].axis('off')
     plt.tight_layout()
     plt.savefig(".work/LR.png", dpi=200)
     plt.clf()
     plt.close("all")
-
+    
+    print(T0_com)
+    print(T0_SIGMA_com)
+    
     return [status, T0, T0_SIGMA, R],mask
 
 def getDFStatistics_ls(file, mask,constants, Ncolor, Nmaker):

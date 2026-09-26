@@ -277,7 +277,7 @@ class App():
         
 
         # others
-        self.fitting_function_list = ["Linear", "Average"]
+        self.fitting_function_list = ["Linear", "Average", "Log-Linear"]
         self.mass_pair = ['Ar39/40', 'Ar36/40', 'Ar39/36', 'Ar40/36', 'Ar38/36']
         self.data_folder = 'Data/'
         self.screenshot_folder = 'Figures/'
@@ -343,8 +343,6 @@ class App():
         self.T0CalculationPage.return_2.clicked.connect(self.toMain)
         self.T0CalculationPage.save.clicked.connect(self.LRP_save)
         self.T0CalculationPage.reselect.clicked.connect(self.LRP_reselect)
-        self.T0CalculationPage.linear.clicked.connect(self.LRP_useLinear)
-        self.T0CalculationPage.average.clicked.connect(self.LRP_useAverage)
         self.T0CalculationPage.new_2.clicked.connect(self.toTS)
         
         # click button on Stat Select
@@ -1430,7 +1428,7 @@ class App():
                 self.T0_fitting_function = 0  # default fitting function is linear
                 self.mask = np.ones((5, self.numCycle))  # 1 means select this data point
 
-                result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, True)  # make LRP
+                result,self.mask = Utilities.calculateT0(self.v_t, self.mask,self.numCycle, True)  # make LRP
                 for i in range(5):
                     for j in range(self.numCycle):
                         if self.mask[i,j] == 0:
@@ -1547,19 +1545,13 @@ class App():
                 else:
                     self.mask[i, j] = 1
 
-        result,self.mask = Utilities.calculateT0(self.T0_fitting_function, self.v_t, self.mask,self.numCycle, False)
+        result,self.mask = Utilities.calculateT0(self.v_t, self.mask,self.numCycle, False)
         [self.tmp_T0, self.tmp_T0_SIGMA, self.R] = result[1:4]
         self.T0CalculationPage.photo.setPixmap(QtGui.QPixmap(".work/LR.png")) # set image in the page
         self.ReselectDialog.close()
 
         if result[0] == 1:
             self.Popup(2, "Fitting Error!", "Unable to fit the manually selected data with {} fucntion!".format(self.fitting_function_list[self.T0_fitting_function]))
-
-    def LRP_useLinear(self):
-        self.LRP_switch_fitting_func(0)
-    
-    def LRP_useAverage(self):
-        self.LRP_switch_fitting_func(1)
 
     def LRP_switch_fitting_func(self, fit_func_type):
         
